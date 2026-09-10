@@ -588,12 +588,11 @@
     <div class="panel market-panel">
       <div class="market-ticker-head">
         <div class="market-ticker-title">📈 US MARKET + ETF WATCH</div>
-        <div class="market-subtitle">Google Finance • หุ้น Top 10 + ETF Top 10 • อาจล่าช้าสูงสุดประมาณ 20 นาที</div>
+        <div class="market-subtitle">Google Finance • ETF Watch • อาจล่าช้าสูงสุดประมาณ 20 นาที</div>
         <button class="tool-btn" id="marketRefreshBtn" style="padding:4px 8px;font-size:10px">↻</button>
       </div>
       <div class="market-ticker-wrap" id="marketTickerWrap">
-        <div class="market-ticker-row"><span class="market-row-label">หุ้น TOP 10</span><div class="market-ticker-track stocks" id="marketStocksGrid"></div></div>
-        <div class="market-ticker-row"><span class="market-row-label etf">ETF TOP 10</span><div class="market-ticker-track etfs" id="marketEtfGrid"></div></div>
+        <div class="market-ticker-row"><span class="market-row-label etf">ETF WATCH</span><div class="market-ticker-track etfs" id="marketEtfGrid"></div></div>
       </div>
     </div>
 
@@ -1100,10 +1099,8 @@ function annualPlanTotal(){
   return scopedFunds().reduce((s,f)=>s+(Number(yearData(f,y,true).target)||0),0);
 }
 function annualActualTotal(){
-  const y=Number(selectedYear);
-  return scopedFunds().reduce((s,f)=>s+(f.transactions||[])
-    .filter(t=>Number(t.year)===y)
-    .reduce((a,t)=>a+(Number(t.amount)||0),0),0);
+  // PlanMaster column Q = เงินลงทุนจริง is the annual actual source used by the overview.
+  return scopedFunds().reduce((s,f)=>s+fundActual(f),0);
 }
 function filteredFunds(){
   const q=(document.getElementById('fundSearch')?.value||'').trim().toLowerCase();
@@ -1114,13 +1111,13 @@ function renderSmartSummary(){
   const y=Number(selectedYear);
   const target=annualPlanTotal();
   const invested=annualActualTotal();
-  const remain=Math.max(0,target-invested);
+  const remain=Math.max(0,target-invested); // R (target) - Q (actual)
   const pct=target?Math.round(invested/target*100):0;
   const monthPlan=monthlyPlanTotal();
   const monthActual=currentMonthInvestment();
   document.getElementById('smartSummary').innerHTML=
    `<div class="summary-card action"><div class="s-k">ปีนี้ควรลงทุน${currentOwnerFilter!=='ALL'?` · ${escapeHtml(currentOwnerFilter)}`:''}</div><div class="s-v">${fmtInt(target)}</div><div class="s-sub">เป้าหมายรวมทั้งปี ${y+543} • จาก Master</div></div>
-    <div class="summary-card"><div class="s-k">ลงทุนแล้วจริง${currentOwnerFilter!=='ALL'?` · ${escapeHtml(currentOwnerFilter)}`:''}</div><div class="s-v">${fmtInt(invested)}</div><div class="s-sub">ยอดลงทุนจริงสะสมตั้งแต่ต้นปี ${y+543}</div></div>
+    <div class="summary-card"><div class="s-k">ลงทุนจริง${currentOwnerFilter!=='ALL'?` · ${escapeHtml(currentOwnerFilter)}`:''}</div><div class="s-v">${fmtInt(invested)}</div><div class="s-sub">ยอดลงทุนจริงสะสมตั้งแต่ต้นปี ${y+543}</div></div>
     <div class="summary-card"><div class="s-k">คงเหลือต้องลงทุนเพิ่ม${currentOwnerFilter!=='ALL'?` · ${escapeHtml(currentOwnerFilter)}`:''}</div><div class="s-v">${fmtInt(remain)}</div><div class="s-sub">เป้าทั้งปี − ลงทุนจริง • สำเร็จแล้ว ${pct}%</div></div>`;
   const noInvest=funds.filter(f=>monthPlanForFund(f,y,currentMonthIndex())>0 && currentMonthInvestmentForFund(f)===0);
   const monthRemain=Math.max(0,monthPlan-monthActual);
@@ -1138,7 +1135,7 @@ function rebuildFundMonths(f){
 function addTransaction(f,date,amount,note=''){
   const d=new Date(date+'T00:00:00');
   const tx={id:'tx_'+Math.random().toString(36).slice(2,10),date,year:d.getFullYear(),month:d.getMonth()+1,amount:Number(amount),note:String(note||'').trim()};
-  f.transactions.push(tx);const yd=yearData(f,tx.year,true);yd.months[tx.month]=(Number(yd.months[tx.month])||0)+tx.amount;
+  f.transactions.push(tx);const yd=yearData(f,tx.year,true);yd.months[tx.month]=(Number(yd.months[tx.month])||0)+tx.amount; yd.masterActual=(f.transactions||[]).filter(t=>Number(t.year)===Number(tx.year)).reduce((a,t)=>a+(Number(t.amount)||0),0);
 }
 function renderHistory(f){
   const wrap=document.getElementById('detailHistory');if(!wrap)return;
@@ -1153,28 +1150,30 @@ function editTransaction(fundId,txId){
   const amount=parseFloat(prompt('จำนวนเงิน',t.amount));if(!amount||amount<=0){showToast('จำนวนเงินไม่ถูกต้อง');return;}
   const d=new Date(date+'T00:00:00');if(Number.isNaN(d.getTime())){showToast('วันที่ไม่ถูกต้อง');return;}
   const note=prompt('โน้ต / บันทึกรายการ (กด OK โดยเว้นว่างได้)',t.note||'');if(note===null)return;
-  t.date=date;t.year=d.getFullYear();t.month=d.getMonth()+1;t.amount=amount;t.note=String(note||'').trim();rebuildFundMonths(f);saveData(DATA);renderAll();openFundDetail(f.id);showToast('แก้ไขรายการและโน้ตแล้ว');
+  t.date=date;t.year=d.getFullYear();t.month=d.getMonth()+1;t.amount=amount;t.note=String(note||'').trim();rebuildFundMonths(f); yearData(f,t.year,true).masterActual=(f.transactions||[]).filter(x=>Number(x.year)===Number(t.year)).reduce((a,x)=>a+(Number(x.amount)||0),0);saveData(DATA);renderAll();openFundDetail(f.id);showToast('แก้ไขรายการและโน้ตแล้ว');
 }
 function deleteTransaction(fundId,txId){
   const f=DATA.funds.find(x=>x.id===fundId);if(!f)return;const t=(f.transactions||[]).find(x=>x.id===txId);if(!t)return;
   if(!confirm(`ลบรายการ ${fmtInt(t.amount)} วันที่ ${t.date} ใช่หรือไม่?`))return;
-  f.transactions=f.transactions.filter(x=>x.id!==txId);rebuildFundMonths(f);saveData(DATA);renderAll();openFundDetail(f.id);showToast('ลบรายการแล้ว');
+  f.transactions=f.transactions.filter(x=>x.id!==txId);rebuildFundMonths(f); yearData(f,t.year,true).masterActual=(f.transactions||[]).filter(x=>Number(x.year)===Number(t.year)).reduce((a,x)=>a+(Number(x.amount)||0),0); saveData(DATA);renderAll();openFundDetail(f.id);showToast('ลบรายการแล้ว');
 }
 
 const fmtInt = n => '฿' + Math.round(n).toLocaleString('th-TH');
 const fmtNum = n => Math.round(n).toLocaleString('th-TH');
 function fundActual(f){
   const y=Number(selectedYear);
+  const yd=yearData(f,y,true);
+  // When PlanMaster has been pulled, column Q is authoritative.
+  if(Object.prototype.hasOwnProperty.call(yd,'masterActual')) return Number(yd.masterActual)||0;
   const tx=(f.transactions||[]).filter(t=>Number(t.year)===y);
   if(tx.length) return tx.reduce((a,t)=>a+(Number(t.amount)||0),0);
-  const yd=yearData(f,y,true);
   return Object.values(yd.months||{}).reduce((a,b)=>a+(Number(b)||0),0);
 }
 function fundPlan(f){
   const yd=yearData(f,selectedYear,true);
   return Object.values(yd.planMonths||{}).reduce((a,b)=>a+(Number(b)||0),0);
 }
-function fundTarget(f){ return Number(yearData(f,selectedYear,true).target)||0; }
+function fundTarget(f){ const yd=yearData(f,selectedYear,true); return Number(Object.prototype.hasOwnProperty.call(yd,'masterTarget')?yd.masterTarget:yd.target)||0; }
 function owners(){ return [...new Set(DATA.funds.map(f=>f.owner))]; }
 function ownerColor(owner){
   if(!OWNER_COLORS[owner]){
@@ -1380,7 +1379,7 @@ function renderTable(){
   body.querySelectorAll('.target-input').forEach(inp=>{
     inp.addEventListener('change', ()=>{
       const f = DATA.funds.find(x=>x.id===inp.dataset.fund);
-      yearData(f).target = parseFloat(inp.value)||0;
+      yearData(f).target = parseFloat(inp.value)||0; yearData(f).masterTarget = yearData(f).target;
       saveData(DATA);
       updateRowComputed(f.id);
       renderHero();
@@ -1683,11 +1682,15 @@ const DEFAULT_MARKET_ASSETS=[
 let MARKET_ASSETS=JSON.parse(localStorage.getItem('market_assets_v3982')||'null')||DEFAULT_MARKET_ASSETS.slice();
 let GF_DATA={};
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function isETFAsset(a){
+ const g=String(a?.group||'').toLowerCase(); const n=String(a?.name||'').toLowerCase(); const t=String(a?.ticker||'').toUpperCase();
+ return g.includes('etf') || n.includes(' etf') || n.endsWith('etf') || ['VOO','VXUS','QQQM','VT','VTI','SCHD'].includes(t);
+}
 function marketInitial(){
- const stocks=document.getElementById('marketStocksGrid'),etfs=document.getElementById('marketEtfGrid'); if(!stocks||!etfs)return;
- const active=MARKET_ASSETS.filter(a=>a.active!==false); const stockAssets=active.filter(a=>a.group!=='ETF'),etfAssets=active.filter(a=>a.group==='ETF');
- const item=a=>`<div class="market-ticker-item na privacy-number" data-market="${esc(a.ticker)}"><span class="dot"></span><span class="ticker">${esc(a.ticker)}</span><span class="group">${esc(a.group)}</span><span class="name">${esc(a.name)}</span><span class="price">—</span><span class="chg">รอข้อมูล</span></div>`;
- stocks.innerHTML=stockAssets.map(item).join('')+stockAssets.map(item).join(''); etfs.innerHTML=etfAssets.map(item).join('')+etfAssets.map(item).join('');
+ const etfs=document.getElementById('marketEtfGrid'); if(!etfs)return;
+ const etfAssets=MARKET_ASSETS.filter(a=>a.active!==false && isETFAsset(a));
+ const item=a=>`<div class="market-ticker-item na privacy-number" data-market="${esc(a.ticker)}"><span class="dot"></span><span class="ticker">${esc(a.ticker)}</span><span class="group">ETF</span><span class="name">${esc(a.name)}</span><span class="price">—</span><span class="chg">รอข้อมูล</span></div>`;
+ etfs.innerHTML=etfAssets.map(item).join('')+etfAssets.map(item).join('');
 }
 function marketCard(a,data){const nodes=document.querySelectorAll(`[data-market="${CSS.escape(a.ticker)}"]`);nodes.forEach(c=>{if(!data||data.price==null||isNaN(Number(data.price))){c.classList.add('na');c.classList.remove('up','down');c.querySelector('.price').textContent='—';c.querySelector('.chg').textContent='ไม่พบข้อมูล';return;}const price=Number(data.price),ch=Number(data.change)||0,pct=Number(data.changepct)||0;c.classList.remove('na','up','down');c.classList.add(ch>=0?'up':'down');c.querySelector('.price').textContent='$'+price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});c.querySelector('.chg').textContent=(ch>=0?'▲ +':'▼ ')+ch.toFixed(2)+'  '+(pct>=0?'+':'')+pct.toFixed(2)+'%';});}
 function marketFormulaRows(){
@@ -1706,7 +1709,7 @@ async function pullMarketWatch(){
  if(!sheetsToken||!sheetId){marketInitial();renderFinanceCards();return;}
  try{await ensureMarketSheet();const j=await sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values:batchGet?ranges=MarketWatch%21A2:S200`);const vals=j.valueRanges?.[0]?.values||[];
   const next=[]; vals.forEach(r=>{if(!r[0])return;next.push({ticker:String(r[0]),name:String(r[1]||r[0]),exchange:String(r[2]||''),active:String(r[3]).toUpperCase()!=='FALSE',group:String(r[4]||'ETF'),price:r[5],change:r[6],changepct:r[7],tradetime:r[8],datadelay:r[9],open:r[10],high:r[11],low:r[12],volume:r[13],marketcap:r[14],pe:r[15],eps:r[16],high52:r[17],low52:r[18]});});
-  if(next.length){MARKET_ASSETS=next.map(x=>({ticker:x.ticker,name:x.name,exchange:x.exchange,active:x.active,group:x.group}));localStorage.setItem('market_assets_v3982',JSON.stringify(MARKET_ASSETS));GF_DATA={};next.forEach(x=>GF_DATA[x.ticker]=x);marketInitial();next.forEach(x=>marketCard(x,x));renderFinanceCards();}
+  if(next.length){MARKET_ASSETS=next.map(x=>({ticker:x.ticker,name:x.name,exchange:x.exchange,active:x.active,group:x.group}));localStorage.setItem('market_assets_v3982',JSON.stringify(MARKET_ASSETS));GF_DATA={};next.forEach(x=>GF_DATA[x.ticker]=x);marketInitial();next.filter(isETFAsset).forEach(x=>marketCard(x,x));renderFinanceCards();}
   localStorage.setItem('market_last_update',new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}));
  }catch(e){console.warn('MarketWatch',e);marketInitial();renderFinanceCards();}
 }
@@ -1793,7 +1796,7 @@ async function pullFromSheets(options={}){if(!sheetsToken||!sheetId)throw new Er
     const code=canonicalFundCode(r[2]); let f=[...map.values()].find(x=>canonicalFundCode(x.name)===code && canonicalOwner(x.owner)===canonicalOwner(r[1]||''));
     if(!f) f=[...map.values()].find(x=>canonicalFundCode(x.name)===code);
     if(!f)return;
-    planRows.push({f,y,months:Array.from({length:12},(_,i)=>Number(r[4+i])||0),target:Number(r[17])||0});
+    planRows.push({f,y,months:Array.from({length:12},(_,i)=>Number(r[4+i])||0),actual:Number(r[16])||0,target:Number(r[17])||0,pct:String(r[18]??'')});
   });
   (ir.slice(1)||[]).forEach(r=>{const f=map.get(r[5]);if(f)f.transactions.push({id:r[0],date:r[1],year:Number(r[2]),month:Number(r[3]),amount:Number(r[8]??r[7])||0,note:String(r[9]??'')});});
   if(options.safeMerge){
@@ -1814,11 +1817,15 @@ async function pullFromSheets(options={}){if(!sheetsToken||!sheetId)throw new Er
   map.forEach(rebuildFundMonths);
   // Apply PlanMaster after rebuilding actual transactions. The monthly table is the plan view,
   // while Investments remains the transaction history. PlanMaster therefore wins for monthly cells.
-  planRows.forEach(({f,y,months,target})=>{
+  planRows.forEach(({f,y,months,actual,target,pct})=>{
     const yd=yearData(f,y,true);
     yd.planMonths={};
     months.forEach((v,i)=>yd.planMonths[i+1]=Number(v)||0);
-    if(target) yd.target=target;
+    // PlanMaster Q/R/S are the authoritative annual actual, target and percentage.
+    yd.masterActual=Number(actual)||0;
+    yd.masterTarget=Number(target)||0;
+    yd.masterPct=pct;
+    yd.target=Number(target)||0;
   });
   if(map.size){DATA={funds:[...map.values()]};DATA.funds.forEach(normalizeFund);localStorage.setItem(STORAGE_KEY,JSON.stringify(DATA));renderAll();}
   localStorage.setItem('sheet_last_sync',new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}));updateSheetUI('connected');return map.size;}
