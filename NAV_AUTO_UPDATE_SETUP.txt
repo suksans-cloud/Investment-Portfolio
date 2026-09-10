@@ -1,0 +1,25 @@
+MY FAMILY FUNDS V39.2 — NAV AUTO UPDATE
+
+สิ่งที่เพิ่ม
+- อัปเดต NAV ของกองทุน SCBAM จากหน้า Daily Open-End Fund NAV ของ SCBAM โดยตรง
+- อัปเดตลงชีต FundMaster คอลัมน์ NAV / NAV Date / NAV Source
+- ตั้ง Trigger ให้อัปเดตวันละครั้งอัตโนมัติได้
+- ในหน้าเว็บ การดึง Google Sheets ทุกครั้งใช้ Safe Merge เพื่อไม่ให้ข้อมูล DCA หาย
+
+วิธีติดตั้ง NAV Auto Update
+1) เปิด Google Spreadsheet ที่ใช้กับ Portfolio DCA
+2) Extensions > Apps Script
+3) สร้างไฟล์ใหม่ชื่อ NAV_Updater.gs
+4) คัดลอกโค้ดจากไฟล์ NAV_Updater.gs ในแพ็กนี้ไปวาง
+5) Save
+6) Run ฟังก์ชัน setupNAVAutoUpdate() ครั้งแรก
+7) อนุญาตสิทธิ์ที่ Google ขอ
+
+หลังจากติดตั้ง
+- ระบบจะอัปเดตวันละครั้งประมาณช่วง 19:00 ตาม timezone ของ Script
+- สามารถเข้าเมนู My Family Funds > อัปเดต NAV ตอนนี้ เพื่อบังคับอัปเดตทันที
+- เฉพาะกองทุน SCBAM ที่มีรหัสตรงกับ FundMaster จะถูกอัปเดตอัตโนมัติ
+- กองทุนค่ายอื่นยังคงใช้ค่า NAV เดิม/แก้ใน FundMaster ได้ และสามารถเพิ่ม source parser ภายหลังได้
+
+หมายเหตุ
+NAV ของกองทุนรวมอาจประกาศช้ากว่าตลาดและไม่จำเป็นต้องมีทุกวันทำการ ระบบจึงไม่ถือว่าไม่มี NAV ใหม่เป็นข้อผิดพลาด
