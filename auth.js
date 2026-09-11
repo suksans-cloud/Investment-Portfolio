@@ -7,6 +7,7 @@
   const TOKEN_KEY='mff_auth_token';
   const USER_KEY='mff_auth_user';
   const REMEMBER_KEY='mff_auth_remember';
+  const POS_KEY='mff_userbar_pos';
   let state=null;
 
   const css=`
@@ -21,8 +22,30 @@
   .mff-auth-btn{width:100%;border:0;border-radius:12px;padding:12px 15px;margin-top:16px;background:#0f5b4d;color:#fff;font-weight:700;font-size:15px;cursor:pointer}.mff-auth-btn:disabled{opacity:.6}
   .mff-auth-link{border:0;background:none;color:#0f5b4d;font-size:13px;cursor:pointer;padding:8px 0}.mff-auth-msg{min-height:20px;color:#d24c63;font-size:13px;margin-top:10px}.mff-auth-ok{color:#23805f}
   .mff-auth-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px}.mff-auth-row label{margin:0;display:flex;align-items:center;gap:7px;font-size:12px}.mff-auth-row input[type=checkbox]{width:auto}
-  #mffUserBar{position:fixed;right:14px;top:14px;z-index:5000;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.96);border:1px solid #dce7e3;border-radius:999px;padding:6px 8px 6px 12px;box-shadow:0 8px 24px rgba(15,91,77,.12);font-size:12px;color:#33433e;backdrop-filter:blur(10px)}
-  #mffUserBar b{color:#0f5b4d}.mff-role{background:#e7f2ef;border-radius:999px;padding:3px 7px;font-size:10px}.mff-user-btn{border:0;border-radius:999px;background:#0f5b4d;color:#fff;padding:6px 10px;font-size:11px;cursor:pointer}.mff-user-btn.secondary{background:#edf4f1;color:#0f5b4d}
+
+  /* ---------- floating collapsible user bubble ---------- */
+  #mffUserBar{position:fixed;right:14px;top:14px;z-index:5000;font-size:12px;color:#33433e;touch-action:none;}
+  .mff-bubble{
+    width:42px;height:42px;border-radius:50%;border:0;
+    background:#0f5b4d;color:#fff;font-weight:800;font-size:15px;cursor:grab;
+    box-shadow:0 8px 22px rgba(15,91,77,.4);display:flex;align-items:center;justify-content:center;
+    user-select:none;touch-action:none;
+  }
+  .mff-bubble:active{cursor:grabbing}
+  #mffUserBar.dragging .mff-bubble{box-shadow:0 12px 28px rgba(15,91,77,.5)}
+  .mff-panel{
+    position:absolute;top:50px;right:0;min-width:190px;
+    background:rgba(255,255,255,.98);border:1px solid #dce7e3;border-radius:16px;
+    padding:10px 12px;box-shadow:0 14px 34px rgba(15,91,77,.22);backdrop-filter:blur(10px);
+  }
+  .mff-panel.mff-panel-left{right:auto;left:0}
+  .mff-panel.mff-panel-up{top:auto;bottom:50px}
+  .mff-panel[hidden]{display:none}
+  .mff-panel-row{display:flex;align-items:center;justify-content:space-between;gap:8px;white-space:nowrap}
+  .mff-panel-row b{color:#0f5b4d}
+  .mff-role{background:#e7f2ef;border-radius:999px;padding:3px 7px;font-size:10px}
+  .mff-panel-actions{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+  .mff-user-btn{border:0;border-radius:999px;background:#0f5b4d;color:#fff;padding:6px 10px;font-size:11px;cursor:pointer}.mff-user-btn.secondary{background:#edf4f1;color:#0f5b4d}
   .mff-privacy-btn{border:0;border-radius:999px;background:#edf4f1;color:#0f5b4d;padding:6px 9px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
   .mff-privacy-btn.active{background:#0f5b4d;color:#fff}
   .mff-privacy-blur .privacy-number{filter:blur(7px);user-select:none}
@@ -31,7 +54,7 @@
   .mff-privacy-blur .privacy-number[data-privacy-force]{filter:blur(7px)}
   .mff-privacy-blur .privacy-reveal-on-focus:focus{filter:none}
   #mffAdminOverlay{position:fixed;inset:0;z-index:6000;background:rgba(20,33,29,.42);display:none;align-items:center;justify-content:center;padding:16px}.mff-admin-card{width:min(900px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:22px;padding:22px}.mff-admin-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.mff-admin-head h2{margin:0}.mff-close{border:0;background:#eef4f1;border-radius:10px;padding:8px 12px;cursor:pointer}.mff-user-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px}.mff-user-table th,.mff-user-table td{padding:9px;border-bottom:1px solid #e8eeeb;text-align:left}.mff-badge{font-size:11px;border-radius:999px;padding:3px 7px;background:#edf4f1}.mff-admin-actions{display:flex;gap:6px;flex-wrap:wrap}.mff-small{border:1px solid #d8e4df;background:#fff;border-radius:8px;padding:6px 8px;font-size:11px;cursor:pointer}.mff-small.danger{color:#c73e56}
-  @media(max-width:650px){#mffUserBar{left:10px;right:10px;top:8px;justify-content:flex-end}.mff-admin-card{padding:16px}.mff-user-table{font-size:11px}}
+  @media(max-width:650px){.mff-admin-card{padding:16px}.mff-user-table{font-size:11px}}
   `;
   const st=document.createElement('style');st.id='mffAuthStyle';st.textContent=css;document.head.appendChild(st);
   document.documentElement.classList.add('mff-auth-pending');
@@ -68,7 +91,91 @@
   function isPrivacyBlur(){return localStorage.getItem(privacyKey())==='1';}
   function applyPrivacy(){document.body.classList.toggle('mff-privacy-blur',isPrivacyBlur());const b=document.getElementById('mffPrivacyBtn');if(b){const on=isPrivacyBlur();b.classList.toggle('active',on);b.innerHTML=on?'🙈 ซ่อนตัวเลข':'👁 แสดงตัวเลข';b.title=on?'แสดงตัวเลข':'ซ่อนตัวเลข';}}
   function togglePrivacy(){localStorage.setItem(privacyKey(),isPrivacyBlur()?'0':'1');applyPrivacy();}
-  function renderUserBar(){if(!state||document.getElementById('mffUserBar'))return;const d=document.createElement('div');d.id='mffUserBar';d.innerHTML=`<span>👤 <b>${esc(state.username)}</b></span><span class="mff-role">${esc(state.role)}</span><button class="mff-privacy-btn" id="mffPrivacyBtn"></button>${state.role==='admin'?'<button class="mff-user-btn secondary" id="mffManageUsers">ผู้ใช้</button>':''}<button class="mff-user-btn" id="mffLogout">ออก</button>`;document.body.appendChild(d);document.getElementById('mffPrivacyBtn').onclick=togglePrivacy;if(state.role==='admin')document.getElementById('mffManageUsers').onclick=adminPanel;document.getElementById('mffLogout').onclick=logout;applyPrivacy();}
+
+  /* ---------- floating draggable / collapsible user bubble ---------- */
+  function clampPos(left,top){
+    const size=42, margin=6;
+    const maxLeft=window.innerWidth-size-margin, maxTop=window.innerHeight-size-margin;
+    return {left:Math.min(Math.max(margin,left),Math.max(margin,maxLeft)), top:Math.min(Math.max(margin,top),Math.max(margin,maxTop))};
+  }
+  function loadPos(){try{return JSON.parse(localStorage.getItem(POS_KEY)||'null');}catch(e){return null;}}
+  function savePos(left,top){try{localStorage.setItem(POS_KEY,JSON.stringify({left,top}));}catch(e){}}
+
+  function setupBubbleInteractions(bar,bubble,panel){
+    let dragging=false, moved=false, startX=0, startY=0, startLeft=0, startTop=0;
+
+    function openPanel(){
+      panel.hidden=false;
+      const r=bubble.getBoundingClientRect();
+      panel.classList.toggle('mff-panel-left', r.left > window.innerWidth/2);
+      panel.classList.toggle('mff-panel-up', r.top > window.innerHeight/2);
+    }
+    function closePanel(){ panel.hidden=true; }
+    function togglePanel(){ panel.hidden ? openPanel() : closePanel(); }
+
+    bubble.addEventListener('pointerdown', e=>{
+      dragging=true; moved=false;
+      bubble.setPointerCapture(e.pointerId);
+      const r=bar.getBoundingClientRect();
+      startX=e.clientX; startY=e.clientY; startLeft=r.left; startTop=r.top;
+    });
+    bubble.addEventListener('pointermove', e=>{
+      if(!dragging)return;
+      const dx=e.clientX-startX, dy=e.clientY-startY;
+      if(Math.abs(dx)>4||Math.abs(dy)>4){
+        if(!moved){ moved=true; bar.classList.add('dragging'); closePanel(); }
+        const pos=clampPos(startLeft+dx, startTop+dy);
+        bar.style.left=pos.left+'px'; bar.style.top=pos.top+'px';
+        bar.style.right='auto'; bar.style.bottom='auto';
+      }
+    });
+    bubble.addEventListener('pointerup', e=>{
+      if(!dragging)return;
+      dragging=false; bar.classList.remove('dragging');
+      if(moved){
+        const r=bar.getBoundingClientRect();
+        savePos(r.left,r.top);
+      } else {
+        togglePanel();
+      }
+    });
+    document.addEventListener('click', e=>{
+      if(!bar.contains(e.target)) closePanel();
+    });
+    window.addEventListener('resize', ()=>{
+      const r=bar.getBoundingClientRect();
+      const pos=clampPos(r.left,r.top);
+      if(pos.left!==r.left||pos.top!==r.top){
+        bar.style.left=pos.left+'px'; bar.style.top=pos.top+'px';
+        bar.style.right='auto'; bar.style.bottom='auto';
+        savePos(pos.left,pos.top);
+      }
+    });
+  }
+
+  function renderUserBar(){
+    if(!state||document.getElementById('mffUserBar'))return;
+    const d=document.createElement('div'); d.id='mffUserBar';
+    const initial=(state.username||'?').trim().charAt(0).toUpperCase();
+    d.innerHTML=`<button class="mff-bubble" id="mffBubble" type="button" aria-label="เมนูผู้ใช้">${esc(initial)}</button>
+      <div class="mff-panel" id="mffPanel" hidden>
+        <div class="mff-panel-row"><span>👤 <b>${esc(state.username)}</b></span><span class="mff-role">${esc(state.role)}</span></div>
+        <div class="mff-panel-actions">
+          <button class="mff-privacy-btn" id="mffPrivacyBtn"></button>
+          ${state.role==='admin'?'<button class="mff-user-btn secondary" id="mffManageUsers">ผู้ใช้</button>':''}
+          <button class="mff-user-btn" id="mffLogout">ออก</button>
+        </div>
+      </div>`;
+    document.body.appendChild(d);
+    const pos=loadPos();
+    if(pos){ const c=clampPos(pos.left,pos.top); d.style.left=c.left+'px'; d.style.top=c.top+'px'; d.style.right='auto'; d.style.bottom='auto'; }
+    document.getElementById('mffPrivacyBtn').onclick=e=>{e.stopPropagation();togglePrivacy();};
+    if(state.role==='admin')document.getElementById('mffManageUsers').onclick=e=>{e.stopPropagation();adminPanel();};
+    document.getElementById('mffLogout').onclick=e=>{e.stopPropagation();logout();};
+    applyPrivacy();
+    setupBubbleInteractions(d, document.getElementById('mffBubble'), document.getElementById('mffPanel'));
+  }
+
   function applyRole(){if(state&&state.role==='viewer'){document.body.classList.add('mff-readonly');const selectors='button,input,select,textarea';document.querySelectorAll(selectors).forEach(el=>{if(el.closest('#mffUserBar'))return;if(el.dataset.authAllow==='true')return;const txt=(el.textContent||'').trim();if(el.matches('input,select,textarea')||/เพิ่ม|บันทึก|ลบ|ลงทุน|สร้าง|เชื่อมต่อ|ซิงค์|ส่ง|นำออก|รายการโปรด|export|CSV|Drive|Google/i.test(txt))el.disabled=true;});}}
   async function logout(){try{await api('logout',{})}catch(e){}clearSession();document.getElementById('mffUserBar')?.remove();document.documentElement.classList.add('mff-auth-pending');showLogin('ออกจากระบบแล้ว');}
   async function adminPanel(){
