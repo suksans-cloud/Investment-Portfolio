@@ -171,7 +171,7 @@
     if(pos){ const c=clampPos(pos.left,pos.top); d.style.left=c.left+'px'; d.style.top=c.top+'px'; d.style.right='auto'; d.style.bottom='auto'; }
     document.getElementById('mffPrivacyBtn').onclick=e=>{e.stopPropagation();togglePrivacy();};
     if(state.role==='admin')document.getElementById('mffManageUsers').onclick=e=>{e.stopPropagation();adminPanel();};
-    document.getElementById('mffLogout').onclick=e=>{e.stopPropagation();logout();};
+    document.getElementById('mffLogout').onclick=e=>{e.stopPropagation();if(!confirm('ต้องการออกจากระบบหรือไม่?'))return;logout();};
     applyPrivacy();
     setupBubbleInteractions(d, document.getElementById('mffBubble'), document.getElementById('mffPanel'));
   }
