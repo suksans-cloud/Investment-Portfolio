@@ -1709,6 +1709,23 @@ function isETFAsset(a){
 function isStockAsset(a){
  return !isETFAsset(a);
 }
+// A device/Sheet that was set up before Top 10 หุ้น existed only ever saved ETF tickers
+// (in localStorage and/or the Google Sheet's MarketWatch tab). Without this, that cached
+// list silently wins over the new defaults and the Top 10 row stays permanently empty.
+// This adds back any default ticker (stock or ETF) that's missing from a given list.
+function mergeDefaultAssets(list){
+ const arr=Array.isArray(list)?list:[];
+ const have=new Set(arr.map(a=>String(a.ticker||'').toUpperCase()));
+ const missing=DEFAULT_MARKET_ASSETS.filter(d=>!have.has(d.ticker.toUpperCase()));
+ if(!missing.length) return {list:arr, changed:false};
+ return {list:[...missing,...arr], changed:true};
+}
+(function seedLocalMarketAssets(){
+ if(localStorage.getItem('market_top10_seeded_v1'))return; // one-time migration only
+ const merged=mergeDefaultAssets(MARKET_ASSETS);
+ if(merged.changed){MARKET_ASSETS=merged.list;localStorage.setItem('market_assets_v3982',JSON.stringify(MARKET_ASSETS));}
+ localStorage.setItem('market_top10_seeded_v1','1');
+})();
 function marketInitial(){
  const etfs=document.getElementById('marketEtfGrid'); const stocks=document.getElementById('marketStockGrid');
  const item=(a,label)=>`<div class="market-ticker-item na privacy-number" data-market="${esc(a.ticker)}"><span class="dot"></span><span class="ticker">${esc(a.ticker)}</span><span class="group">${esc(label)}</span><span class="name">${esc(a.name)}</span><span class="price">—</span><span class="chg">รอข้อมูล</span></div>`;
@@ -1735,9 +1752,29 @@ async function ensureMarketSheet(){
  return true;
 }
 async function pullMarketWatch(){
- if(!sheetsToken||!sheetId){marketInitial();renderFinanceCards();return;}
+ if(!sheetsToken||!sheetId){
+  const merged=mergeDefaultAssets(MARKET_ASSETS);
+  if(merged.changed){MARKET_ASSETS=merged.list;localStorage.setItem('market_assets_v3982',JSON.stringify(MARKET_ASSETS));}
+  marketInitial();renderFinanceCards();return;
+ }
  try{await ensureMarketSheet();const j=await sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values:batchGet?ranges=MarketWatch%21A2:S200`);const vals=j.valueRanges?.[0]?.values||[];
   const next=[]; vals.forEach(r=>{if(!r[0])return;next.push({ticker:String(r[0]),name:String(r[1]||r[0]),exchange:String(r[2]||''),active:String(r[3]).toUpperCase()!=='FALSE',group:String(r[4]||'ETF'),price:r[5],change:r[6],changepct:r[7],tradetime:r[8],datadelay:r[9],open:r[10],high:r[11],low:r[12],volume:r[13],marketcap:r[14],pe:r[15],eps:r[16],high52:r[17],low52:r[18]});});
+  const alreadySeeded=localStorage.getItem('market_sheet_top10_seeded_v1');
+  const merged=alreadySeeded?{list:next,changed:false}:mergeDefaultAssets(next);
+  if(merged.changed){
+   // The MarketWatch tab in this Google Sheet predates the Top 10 หุ้น tickers (it only has
+   // the old ETF list). Re-seed it with the full ticker set so GOOGLEFINANCE starts
+   // calculating prices for the missing ones too, instead of leaving the row empty forever.
+   MARKET_ASSETS=merged.list;
+   localStorage.setItem('market_assets_v3982',JSON.stringify(MARKET_ASSETS));
+   await sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values/MarketWatch!A:S:clear`,{method:'POST',body:'{}'});
+   await sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values/MarketWatch!A1?valueInputOption=USER_ENTERED`,{method:'PUT',body:JSON.stringify({range:'MarketWatch!A1',majorDimension:'ROWS',values:marketFormulaRows()})});
+   GF_DATA={}; next.forEach(x=>GF_DATA[x.ticker]=x);
+   marketInitial(); next.forEach(x=>marketCard(x,x)); renderFinanceCards();
+   localStorage.setItem('market_sheet_top10_seeded_v1','1');
+   localStorage.setItem('market_last_update',new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}));
+   return;
+  }
   if(next.length){MARKET_ASSETS=next.map(x=>({ticker:x.ticker,name:x.name,exchange:x.exchange,active:x.active,group:x.group}));localStorage.setItem('market_assets_v3982',JSON.stringify(MARKET_ASSETS));GF_DATA={};next.forEach(x=>GF_DATA[x.ticker]=x);marketInitial();next.forEach(x=>marketCard(x,x));renderFinanceCards();}
   localStorage.setItem('market_last_update',new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}));
  }catch(e){console.warn('MarketWatch',e);marketInitial();renderFinanceCards();}
