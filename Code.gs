@@ -17,6 +17,12 @@ const USERS_SHEET = 'Users';
 const SESSIONS_SHEET = 'Sessions';
 const SESSION_DAYS = 30; // อายุ token (วัน)
 
+function doGet(e) {
+  // เปิด URL /exec ตรง ๆ ในเบราว์เซอร์ (GET) จะเจอหน้านี้ — ใช้เช็คว่า deploy ติดหรือไม่
+  return ContentService.createTextOutput(JSON.stringify({ ok: true, message: 'MFF Auth API is running' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
 function doPost(e) {
   let out;
   try {
