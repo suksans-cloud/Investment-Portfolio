@@ -1,59 +1,217 @@
-/* My Family Funds — Auth API for Google Apps Script
- * Deploy as Web app: Execute as Me / Who has access: Anyone
+/**
+ * My Family Funds — Auth Backend (Google Apps Script)
+ * -----------------------------------------------------
+ * วิธีติดตั้ง:
+ * 1) เปิด Google Sheet ที่จะใช้เก็บผู้ใช้ (ไฟล์ใหม่หรือไฟล์เดิมก็ได้)
+ * 2) เมนู Extensions > Apps Script แล้ววางไฟล์นี้ทับ Code.gs
+ * 3) กด Deploy > New deployment > เลือกประเภท "Web app"
+ *      - Execute as: Me
+ *      - Who has access: Anyone
+ * 4) คัดลอก URL ที่ลงท้ายด้วย /exec แล้วเอาไปแทนที่ค่า ENDPOINT ในไฟล์ auth.js
+ * 5) เปิดหน้าเว็บ กด "ตั้งค่า Admin ครั้งแรก" เพื่อสร้างบัญชี Admin ชุดแรก
+ *
+ * ระบบจะสร้างชีต "Users" และ "Sessions" ให้อัตโนมัติในสเปรดชีตนี้เมื่อเรียกใช้ครั้งแรก
  */
-const SHEET_ID = '1T4cu1gKhFid4rmGimnEz4Hea_Hv71Nz3mpawRBSEdDY';
-const SESSION_HOURS = 720; // 30 days; refresh/browser reopen will keep the login session
-const HASH_ROUNDS = 15000;
-const USERS = 'Users';
-const SESSIONS = 'Sessions';
 
-function doGet(){return json({ok:true,service:'My Family Funds Auth API',status:'online'});}
-function doPost(e){
-  try{
-    const body=e&&e.postData&&e.postData.contents?JSON.parse(e.postData.contents):{};
-    return json(route(body));
-  }catch(err){return json({ok:false,error:String(err&&err.message||err)});}
+const USERS_SHEET = 'Users';
+const SESSIONS_SHEET = 'Sessions';
+const SESSION_DAYS = 30; // อายุ token (วัน)
+
+function doPost(e) {
+  let out;
+  try {
+    const body = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+    const action = body.action;
+    const lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+    try {
+      out = route(action, body);
+    } finally {
+      lock.releaseLock();
+    }
+  } catch (err) {
+    out = { ok: false, error: String(err && err.message || err) };
+  }
+  return ContentService.createTextOutput(JSON.stringify(out))
+    .setMimeType(ContentService.MimeType.JSON);
 }
-function json(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);}
-function ss(){return SpreadsheetApp.openById(SHEET_ID);}
-function sheet(name,headers){let s=ss().getSheetByName(name);if(!s){s=ss().insertSheet(name);s.getRange(1,1,1,headers.length).setValues([headers]);}return s;}
-function setup(){sheet(USERS,['username','password_hash','salt','role','active','created_at','last_login']);sheet(SESSIONS,['token','username','role','expires_at','created_at','revoked']);}
-function rows(name){const s=sheet(name,name===USERS?['username','password_hash','salt','role','active','created_at','last_login']:['token','username','role','expires_at','created_at','revoked']);const v=s.getDataRange().getValues();return v.length>1?v.slice(1):[];}
-function norm(u){return String(u||'').trim().toLowerCase();}
-function now(){return new Date();}
-function iso(d){return new Date(d).toISOString();}
-function salt(){return Utilities.getUuid().replace(/-/g,'')+Utilities.base64EncodeWebSafe(Utilities.newBlob(Utilities.getUuid()).getBytes()).slice(0,16);}
-function hash(p,s){let x=s+'|'+String(p);for(let i=0;i<HASH_ROUNDS;i++)x=Utilities.base64EncodeWebSafe(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,x,Utilities.Charset.UTF_8));return x;}
-function token(){return Utilities.base64EncodeWebSafe(Utilities.getUuid()+'|'+Utilities.getUuid()+'|'+new Date().getTime());}
-function route(b){
- setup();const a=String(b.action||'');
- if(a==='bootstrapStatus')return {ok:true,hasUsers:rows(USERS).length>0};
- if(a==='bootstrapAdmin')return bootstrapAdmin(b);
- if(a==='login')return login(b);
- if(a==='validate'){const s=requireSession(b.token);return {ok:true,user:{username:s.username,role:s.role}};}
- if(a==='logout'){if(b.token)revoke(b.token);return {ok:true};}
- const s=requireSession(b.token);if(s.role!=='admin')throw Error('ต้องใช้สิทธิ์ admin');
- if(a==='listUsers')return listUsers();
- if(a==='createUser')return createUser(b);
- if(a==='setUserActive')return setUserActive(b,s.username);
- if(a==='resetPassword')return resetPassword(b);
- if(a==='deleteUser')return deleteUser(b,s.username);
- throw Error('ไม่รู้จัก action');
+
+function route(action, body) {
+  switch (action) {
+    case 'bootstrapStatus': return bootstrapStatus();
+    case 'bootstrapAdmin':  return bootstrapAdmin(body);
+    case 'login':           return login(body);
+    case 'validate':        return validate(body);
+    case 'logout':          return logout(body);
+    case 'listUsers':       return requireAdmin(body, listUsers);
+    case 'createUser':      return requireAdmin(body, createUser);
+    case 'setUserActive':   return requireAdmin(body, setUserActive);
+    case 'resetPassword':   return requireAdmin(body, resetPassword);
+    case 'deleteUser':      return requireAdmin(body, deleteUser);
+    default: return { ok: false, error: 'Unknown action: ' + action };
+  }
 }
-function bootstrapAdmin(b){
- const us=rows(USERS);if(us.length)throw Error('มีผู้ใช้อยู่แล้ว ไม่สามารถ bootstrap ได้');
- const u=norm(b.username);const p=String(b.password||'');if(!u||p.length<6)throw Error('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
- const s=salt();sheet(USERS).appendRow([u,hash(p,s),s,'admin',true,iso(now()),'']);return {ok:true};
+
+/* ---------- sheet helpers ---------- */
+function ss() { return SpreadsheetApp.getActiveSpreadsheet(); }
+
+function getSheet(name, headers) {
+  let sh = ss().getSheetByName(name);
+  if (!sh) {
+    sh = ss().insertSheet(name);
+    sh.appendRow(headers);
+  }
+  return sh;
 }
-function login(b){
- const u=norm(b.username),p=String(b.password||'');const data=rows(USERS);let idx=-1,rec;
- data.forEach((r,i)=>{if(norm(r[0])===u){idx=i;rec=r;}});if(idx<0||String(rec[4]).toLowerCase()!=='true')throw Error('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');if(hash(p,rec[2])!==rec[1])throw Error('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
- const role=rec[3]||'user',t=token(),created=now(),exp=new Date(created.getTime()+SESSION_HOURS*3600000);sheet(SESSIONS).appendRow([t,u,role,iso(exp),iso(created),false]);sheet(USERS).getRange(idx+2,7).setValue(iso(created));return {ok:true,token:t,expires_at:iso(exp),user:{username:u,role}};
+
+function usersSheet() {
+  return getSheet(USERS_SHEET, ['Username', 'PasswordHash', 'Salt', 'Role', 'Active', 'CreatedAt']);
 }
-function requireSession(t){if(!t)throw Error('ต้องเข้าสู่ระบบ');const s=rows(SESSIONS),n=new Date();for(let i=0;i<s.length;i++){if(s[i][0]===t&&String(s[i][5]).toLowerCase()!=='true'){if(new Date(s[i][3])<=n)throw Error('เซสชันหมดอายุ');return {username:s[i][1],role:s[i][2]};}}throw Error('เซสชันไม่ถูกต้อง');}
-function revoke(t){const sh=sheet(SESSIONS);const v=sh.getDataRange().getValues();for(let i=1;i<v.length;i++)if(v[i][0]===t)sh.getRange(i+1,6).setValue(true);}
-function listUsers(){return {ok:true,users:rows(USERS).map(r=>({username:r[0],role:r[3],active:String(r[4]).toLowerCase()==='true',created_at:r[5],last_login:r[6]}))};}
-function createUser(b){const u=norm(b.username),p=String(b.password||''),role=String(b.role||'user');if(!u||p.length<6)throw Error('ชื่อผู้ใช้/รหัสผ่านไม่ถูกต้อง');if(!['admin','user','viewer'].includes(role))throw Error('สิทธิ์ไม่ถูกต้อง');if(rows(USERS).some(r=>norm(r[0])===u))throw Error('มีชื่อผู้ใช้นี้แล้ว');const s=salt();sheet(USERS).appendRow([u,hash(p,s),s,role,true,iso(now()),'']);return {ok:true};}
-function setUserActive(b,current){const u=norm(b.username),sh=sheet(USERS),v=sh.getDataRange().getValues();for(let i=1;i<v.length;i++)if(norm(v[i][0])===u){const role=String(v[i][3]||'user');if(!b.active&&u===norm(current)&&role==='admin')throw Error('ไม่สามารถปิดใช้งาน Admin ที่กำลังเข้าสู่ระบบ');if(!b.active&&role==='admin'){const activeAdmins=v.slice(1).filter(r=>String(r[3]||'')==='admin'&&String(r[4]).toLowerCase()==='true').length;if(activeAdmins<=1)throw Error('ต้องมี Admin ที่ใช้งานได้อย่างน้อย 1 บัญชี');}sh.getRange(i+1,5).setValue(!!b.active);return {ok:true};}throw Error('ไม่พบผู้ใช้');}
-function resetPassword(b){const u=norm(b.username),p=String(b.password||'');if(p.length<6)throw Error('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');const sh=sheet(USERS),v=sh.getDataRange().getValues();for(let i=1;i<v.length;i++)if(norm(v[i][0])===u){const s=salt();sh.getRange(i+1,2,1,2).setValues([[hash(p,s),s]]);return {ok:true};}throw Error('ไม่พบผู้ใช้');}
-function deleteUser(b,current){const u=norm(b.username);if(u===norm(current))throw Error('ไม่สามารถลบบัญชีที่กำลังใช้งาน');const sh=sheet(USERS),v=sh.getDataRange().getValues();for(let i=1;i<v.length;i++)if(norm(v[i][0])===u){sh.deleteRow(i+1);return {ok:true};}throw Error('ไม่พบผู้ใช้');}
+function sessionsSheet() {
+  return getSheet(SESSIONS_SHEET, ['Token', 'Username', 'ExpiresAt']);
+}
+
+function readRows(sh) {
+  const values = sh.getDataRange().getValues();
+  const headers = values.shift();
+  return values.map((row, i) => {
+    const o = {};
+    headers.forEach((h, j) => o[h] = row[j]);
+    o._row = i + 2; // +2 เพราะแถวหัวตารางคือแถว 1
+    return o;
+  });
+}
+
+function findUser(username) {
+  const rows = readRows(usersSheet());
+  return rows.find(u => String(u.Username).toLowerCase() === String(username).toLowerCase());
+}
+
+/* ---------- password hashing (salted SHA-256) ---------- */
+function makeSalt() { return Utilities.getUuid(); }
+
+function hashPassword(password, salt) {
+  const raw = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, salt + ':' + password);
+  return raw.map(b => (b < 0 ? b + 256 : b).toString(16).padStart(2, '0')).join('');
+}
+
+/* ---------- tokens / sessions ---------- */
+function issueToken(username) {
+  const sh = sessionsSheet();
+  const token = Utilities.getUuid();
+  const expires = new Date(Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000).toISOString();
+  sh.appendRow([token, username, expires]);
+  return token;
+}
+function findSession(token) {
+  const rows = readRows(sessionsSheet());
+  return rows.find(s => s.Token === token);
+}
+function deleteSession(token) {
+  const sh = sessionsSheet();
+  const rows = readRows(sh);
+  const row = rows.find(s => s.Token === token);
+  if (row) sh.deleteRow(row._row);
+}
+
+function currentUser(token) {
+  if (!token) return null;
+  const sess = findSession(token);
+  if (!sess) return null;
+  if (new Date(sess.ExpiresAt) < new Date()) { deleteSession(token); return null; }
+  const u = findUser(sess.Username);
+  if (!u || u.Active === false || u.Active === 'FALSE') return null;
+  return u;
+}
+
+function requireAdmin(body, fn) {
+  const u = currentUser(body.token);
+  if (!u) return { ok: false, error: 'กรุณาเข้าสู่ระบบ' };
+  if (u.Role !== 'admin') return { ok: false, error: 'ต้องเป็น admin เท่านั้น' };
+  return fn(body, u);
+}
+
+/* ---------- actions ---------- */
+function bootstrapStatus() {
+  const rows = readRows(usersSheet());
+  return { ok: true, hasUsers: rows.length > 0 };
+}
+
+function bootstrapAdmin(body) {
+  const rows = readRows(usersSheet());
+  if (rows.length > 0) return { ok: false, error: 'มี Admin อยู่แล้ว กรุณาเข้าสู่ระบบ' };
+  const username = String(body.username || '').trim();
+  const password = String(body.password || '');
+  if (!username || password.length < 6) return { ok: false, error: 'ข้อมูลไม่ถูกต้อง' };
+  const salt = makeSalt();
+  usersSheet().appendRow([username, hashPassword(password, salt), salt, 'admin', true, new Date().toISOString()]);
+  return { ok: true };
+}
+
+function login(body) {
+  const username = String(body.username || '').trim();
+  const password = String(body.password || '');
+  const u = findUser(username);
+  if (!u) return { ok: false, error: 'Invalid username or password' };
+  if (u.Active === false || u.Active === 'FALSE') return { ok: false, error: 'บัญชีถูกปิดใช้งาน' };
+  if (hashPassword(password, u.Salt) !== u.PasswordHash) return { ok: false, error: 'Invalid username or password' };
+  const token = issueToken(u.Username);
+  return { ok: true, token, user: { username: u.Username, role: u.Role } };
+}
+
+function validate(body) {
+  const u = currentUser(body.token);
+  if (!u) return { ok: false, error: 'Session invalid' };
+  return { ok: true, user: { username: u.Username, role: u.Role } };
+}
+
+function logout(body) {
+  if (body.token) deleteSession(body.token);
+  return { ok: true };
+}
+
+function listUsers() {
+  const rows = readRows(usersSheet());
+  return {
+    ok: true, users: rows.map(u => ({
+      username: u.Username,
+      role: u.Role,
+      active: !(u.Active === false || u.Active === 'FALSE'),
+      created_at: u.CreatedAt
+    }))
+  };
+}
+
+function createUser(body) {
+  const username = String(body.username || '').trim();
+  const password = String(body.password || '');
+  const role = String(body.role || 'user');
+  if (!username || !password) return { ok: false, error: 'ข้อมูลไม่ครบ' };
+  if (findUser(username)) return { ok: false, error: 'มีชื่อผู้ใช้นี้อยู่แล้ว' };
+  const salt = makeSalt();
+  usersSheet().appendRow([username, hashPassword(password, salt), salt, role, true, new Date().toISOString()]);
+  return { ok: true };
+}
+
+function setUserActive(body) {
+  const u = findUser(body.username);
+  if (!u) return { ok: false, error: 'ไม่พบผู้ใช้' };
+  usersSheet().getRange(u._row, 5).setValue(!!body.active);
+  return { ok: true };
+}
+
+function resetPassword(body) {
+  const u = findUser(body.username);
+  if (!u) return { ok: false, error: 'ไม่พบผู้ใช้' };
+  const salt = makeSalt();
+  usersSheet().getRange(u._row, 2, 1, 2).setValues([[hashPassword(body.password, salt), salt]]);
+  return { ok: true };
+}
+
+function deleteUser(body, actingUser) {
+  const u = findUser(body.username);
+  if (!u) return { ok: false, error: 'ไม่พบผู้ใช้' };
+  if (u.Username === actingUser.Username) return { ok: false, error: 'ลบบัญชีตัวเองไม่ได้' };
+  usersSheet().deleteRow(u._row);
+  return { ok: true };
+}
