@@ -3,7 +3,7 @@
  */
 (function(){
   'use strict';
-  const ENDPOINT='https://script.google.com/macros/s/AKfycbyHSUQbkUn6w_ZRQn-RpElvoZIdrer3gyO_RP7HRwrjfgTovCob1CxMbhGZPq_krSCYiA/exec';
+  const ENDPOINT='https://script.google.com/macros/s/AKfycbxt2uDzF8InuSZ6PARs-W12ZRxRoaLStygwI0saur1go8Ptfq8bfImO239uDUKf-aKtJQ/exec';
   const TOKEN_KEY='mff_auth_token';
   const USER_KEY='mff_auth_user';
   const REMEMBER_KEY='mff_auth_remember';
