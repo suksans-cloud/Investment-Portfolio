@@ -3,7 +3,9 @@
  */
 (function(){
   'use strict';
-  const ENDPOINT='https://script.google.com/macros/s/AKfycbxt2uDzF8InuSZ6PARs-W12ZRxRoaLStygwI0saur1go8Ptfq8bfImO239uDUKf-aKtJQ/exec';
+  const ENDPOINT='https://script.google.com/macros/s/AKfycbyHSUQbkUn6w_ZRQn-RpElvoZIdrer3gyO_RP7HRwrjfgTovCob1CxMbhGZPq_krSCYiA/exec
+
+';
   const TOKEN_KEY='mff_auth_token';
   const USER_KEY='mff_auth_user';
   const REMEMBER_KEY='mff_auth_remember';
@@ -34,20 +36,17 @@
   .mff-bubble:active{cursor:grabbing}
   #mffUserBar.dragging .mff-bubble{box-shadow:0 12px 28px rgba(15,91,77,.5)}
   .mff-panel{
-    position:absolute;top:50%;right:48px;transform:translateY(-50%);
-    min-width:0;max-width:calc(100vw - 78px);
-    background:rgba(255,255,255,.98);border:1px solid #dce7e3;border-radius:18px;
-    padding:7px 8px;box-shadow:0 14px 34px rgba(15,91,77,.22);backdrop-filter:blur(10px);
-    display:flex;align-items:center;gap:7px;white-space:nowrap;box-sizing:border-box;overflow:hidden;
+    position:absolute;top:50px;right:0;min-width:190px;
+    background:rgba(255,255,255,.98);border:1px solid #dce7e3;border-radius:16px;
+    padding:10px 12px;box-shadow:0 14px 34px rgba(15,91,77,.22);backdrop-filter:blur(10px);
   }
-  .mff-panel.mff-panel-right{right:auto;left:48px}
-  .mff-panel.mff-panel-up{top:50%;bottom:auto}
-  .mff-panel.mff-panel-left{right:48px;left:auto}
+  .mff-panel.mff-panel-left{right:auto;left:0}
+  .mff-panel.mff-panel-up{top:auto;bottom:50px}
   .mff-panel[hidden]{display:none}
-  .mff-panel-row{display:flex;align-items:center;justify-content:flex-start;gap:8px;white-space:nowrap;flex:none}
+  .mff-panel-row{display:flex;align-items:center;justify-content:space-between;gap:8px;white-space:nowrap}
   .mff-panel-row b{color:#0f5b4d}
   .mff-role{background:#e7f2ef;border-radius:999px;padding:3px 7px;font-size:10px}
-  .mff-panel-actions{display:flex;align-items:center;gap:5px;margin-top:0;flex-wrap:nowrap;flex:none}
+  .mff-panel-actions{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
   .mff-user-btn{border:0;border-radius:999px;background:#0f5b4d;color:#fff;padding:6px 10px;font-size:11px;cursor:pointer}.mff-user-btn.secondary{background:#edf4f1;color:#0f5b4d}
   .mff-privacy-btn{border:0;border-radius:999px;background:#edf4f1;color:#0f5b4d;padding:6px 9px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
   .mff-privacy-btn.active{background:#0f5b4d;color:#fff}
@@ -71,8 +70,8 @@
   }
   function showLogin(message){
     overlay(); const b=document.getElementById('mffAuthBody');
-    b.innerHTML=`<h2>เข้าสู่ระบบ</h2><form id="mffLoginForm"><label>ชื่อผู้ใช้</label><input id="mffUser" autocomplete="username" required><label>รหัสผ่าน</label><input id="mffPass" type="password" autocomplete="current-password" required><button class="mff-auth-btn" id="mffLoginBtn">เข้าสู่ระบบ</button><div class="mff-auth-msg">${esc(message||'')}</div></form><button class="mff-auth-link" id="mffSetupLink">ตั้งค่า Admin ครั้งแรก</button>`;
-    document.getElementById('mffLoginForm').onsubmit=e=>{e.preventDefault();login(document.getElementById('mffUser').value.trim(),document.getElementById('mffPass').value,false)};
+    b.innerHTML=`<h2>เข้าสู่ระบบ</h2><form id="mffLoginForm"><label>ชื่อผู้ใช้</label><input id="mffUser" autocomplete="username" required><label>รหัสผ่าน</label><input id="mffPass" type="password" autocomplete="current-password" required><div class="mff-auth-row"><label><input id="mffRemember" type="checkbox" checked> จดจำการเข้าสู่ระบบ</label></div><button class="mff-auth-btn" id="mffLoginBtn">เข้าสู่ระบบ</button><div class="mff-auth-msg">${esc(message||'')}</div></form><button class="mff-auth-link" id="mffSetupLink">ตั้งค่า Admin ครั้งแรก</button>`;
+    document.getElementById('mffLoginForm').onsubmit=e=>{e.preventDefault();login(document.getElementById('mffUser').value.trim(),document.getElementById('mffPass').value,document.getElementById('mffRemember').checked)};
     document.getElementById('mffSetupLink').onclick=()=>showSetup();
   }
   function showSetup(message){
@@ -86,7 +85,7 @@
     const r=await fetch(ENDPOINT,{method:'POST',mode:'cors',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
     const text=await r.text();let j;try{j=JSON.parse(text)}catch(e){throw Error('เซิร์ฟเวอร์ตอบกลับไม่ใช่ JSON');}if(!r.ok||j.ok===false)throw Error(j.error||'เกิดข้อผิดพลาด');return j;
   }
-  function saveSession(r,remember){state=r.user;sessionStorage.setItem(TOKEN_KEY,r.token);sessionStorage.setItem(USER_KEY,JSON.stringify(r.user));localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);localStorage.removeItem(REMEMBER_KEY);}
+  function saveSession(r,remember){state=r.user;if(remember){localStorage.setItem(TOKEN_KEY,r.token);localStorage.setItem(USER_KEY,JSON.stringify(r.user));localStorage.setItem(REMEMBER_KEY,'1');sessionStorage.removeItem(TOKEN_KEY);sessionStorage.removeItem(USER_KEY);}else{sessionStorage.setItem(TOKEN_KEY,r.token);sessionStorage.setItem(USER_KEY,JSON.stringify(r.user));localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);localStorage.setItem(REMEMBER_KEY,'0');}}
   function clearSession(){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);sessionStorage.removeItem(TOKEN_KEY);sessionStorage.removeItem(USER_KEY);state=null;}
   async function login(u,p,remember){const btn=document.getElementById('mffLoginBtn');if(btn)btn.disabled=true;try{const r=await api('login',{username:u,password:p});saveSession(r,remember);unlock();}catch(e){showLogin(e.message)}finally{const x=document.getElementById('mffLoginBtn');if(x)x.disabled=false;}}
   function unlock(){document.documentElement.classList.remove('mff-auth-pending');const o=document.getElementById('mffAuthOverlay');if(o)o.remove();renderUserBar();applyRole();applyPrivacy();}
@@ -110,10 +109,8 @@
     function openPanel(){
       panel.hidden=false;
       const r=bubble.getBoundingClientRect();
-      const onRight = r.left > window.innerWidth/2;
-      panel.classList.toggle('mff-panel-left', onRight);
-      panel.classList.toggle('mff-panel-right', !onRight);
-      panel.classList.remove('mff-panel-up');
+      panel.classList.toggle('mff-panel-left', r.left > window.innerWidth/2);
+      panel.classList.toggle('mff-panel-up', r.top > window.innerHeight/2);
     }
     function closePanel(){ panel.hidden=true; }
     function togglePanel(){ panel.hidden ? openPanel() : closePanel(); }
@@ -164,7 +161,7 @@
     const initial=(state.username||'?').trim().charAt(0).toUpperCase();
     d.innerHTML=`<button class="mff-bubble" id="mffBubble" type="button" aria-label="เมนูผู้ใช้">${esc(initial)}</button>
       <div class="mff-panel" id="mffPanel" hidden>
-        <div class="mff-panel-row"><span>👤 <b>${esc(state.username)}</b></span></div>
+        <div class="mff-panel-row"><span>👤 <b>${esc(state.username)}</b></span><span class="mff-role">${esc(state.role)}</span></div>
         <div class="mff-panel-actions">
           <button class="mff-privacy-btn" id="mffPrivacyBtn"></button>
           ${state.role==='admin'?'<button class="mff-user-btn secondary" id="mffManageUsers">ผู้ใช้</button>':''}
@@ -181,7 +178,7 @@
     setupBubbleInteractions(d, document.getElementById('mffBubble'), document.getElementById('mffPanel'));
   }
 
-  function applyRole(){if(state&&state.role==='viewer'){document.body.classList.add('mff-readonly');const selectors='button,input,select,textarea';document.querySelectorAll(selectors).forEach(el=>{if(el.closest('#mffUserBar'))return;if(el.dataset.authAllow==='true')return;if(el.id==='bnInvest'||el.closest('#modalInvest'))return;const txt=(el.textContent||'').trim();if(el.matches('input,select,textarea')||/เพิ่ม|บันทึก|ลบ|สร้าง|เชื่อมต่อ|ซิงค์|ส่ง|นำออก|รายการโปรด|export|CSV|Drive|Google/i.test(txt))el.disabled=true;});}}
+  function applyRole(){if(state&&state.role==='viewer'){document.body.classList.add('mff-readonly');const selectors='button,input,select,textarea';document.querySelectorAll(selectors).forEach(el=>{if(el.closest('#mffUserBar'))return;if(el.dataset.authAllow==='true')return;const txt=(el.textContent||'').trim();if(el.matches('input,select,textarea')||/เพิ่ม|บันทึก|ลบ|ลงทุน|สร้าง|เชื่อมต่อ|ซิงค์|ส่ง|นำออก|รายการโปรด|export|CSV|Drive|Google/i.test(txt))el.disabled=true;});}}
   async function logout(){try{await api('logout',{})}catch(e){}clearSession();document.getElementById('mffUserBar')?.remove();document.documentElement.classList.add('mff-auth-pending');showLogin('ออกจากระบบแล้ว');}
   async function adminPanel(){
     let o=document.getElementById('mffAdminOverlay');if(!o){o=document.createElement('div');o.id='mffAdminOverlay';o.innerHTML=`<div class="mff-admin-card"><div class="mff-admin-head"><h2>จัดการผู้ใช้</h2><button class="mff-close" id="mffAdminClose">ปิด</button></div><form id="mffCreateUser" style="display:grid;grid-template-columns:1.1fr 1fr 1fr auto;gap:8px;margin-top:16px"><input id="newU" placeholder="ชื่อผู้ใช้" required><input id="newP" type="password" placeholder="รหัสผ่าน" required><select id="newR"><option value="user">user</option><option value="viewer">viewer</option><option value="admin">admin</option></select><button class="mff-small" type="submit">เพิ่มผู้ใช้</button></form><div id="mffUsers"></div></div>`;document.body.appendChild(o);document.getElementById('mffAdminClose').onclick=()=>o.style.display='none';document.getElementById('mffCreateUser').onsubmit=async e=>{e.preventDefault();try{await api('createUser',{username:newU.value.trim(),password:newP.value,role:newR.value});newU.value='';newP.value='';await loadUsers();}catch(x){alert(x.message)}};}o.style.display='flex';await loadUsers();
