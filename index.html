@@ -536,19 +536,83 @@
 .detail-actions{display:flex;gap:8px;margin-top:12px}.detail-action-btn{flex:1;border:1px solid var(--line);background:var(--surface);color:var(--primary);border-radius:11px;padding:10px;font-weight:700;cursor:pointer}
 .history-list{display:flex;flex-direction:column;gap:7px;margin-top:10px}.history-item{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:10px 11px;background:var(--surface);border:1px solid var(--line);border-radius:12px}.history-date{font-size:12.5px;color:var(--ink-soft)}.history-note{font-size:12px;color:var(--ink-faint)}.history-amt{font-weight:800;font-size:13.5px}.history-actions{display:flex;gap:4px}.history-actions button{border:none;background:var(--primary-soft);color:var(--primary);border-radius:7px;width:28px;height:28px;cursor:pointer}.history-note-text{font-size:12.5px;color:var(--ink);margin-top:4px;line-height:1.45;word-break:break-word}.history-note-empty{font-size:12px;color:var(--ink-faint);margin-top:4px;font-style:italic}.note-field textarea{width:100%;min-height:74px;resize:vertical;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:13px;background:var(--surface);color:var(--ink);outline:none}.note-field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(104,189,178,.10)}.history-help{font-size:12px;color:var(--ink-faint);margin-top:3px}
 .sheet-connect-box{background:linear-gradient(145deg,#F0F7F4,#fff);border:1px solid #D7E7E1;border-radius:16px;padding:13px;margin-top:12px}.sheet-status{font-size:12.5px;color:var(--ink-soft);line-height:1.5;margin-top:6px}.setup-note{font-size:12.5px;color:var(--ink-faint);line-height:1.5;margin-top:7px}
-.quick-month{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px}.quick-month-item{min-width:0;text-align:center;padding:10px 7px;border:1px solid #DFEBE6;border-radius:12px;background:var(--surface);box-sizing:border-box}.quick-month-item .qm-label{display:block;font-size:11.5px;line-height:1.3;color:var(--ink-soft);white-space:nowrap}.quick-month-item .qm-value{display:block;margin-top:5px;font-size:15px;line-height:1.25;font-weight:800;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.quick-month-item.remain .qm-value{color:var(--ink)}
-@media(max-width:520px){.quick-month{gap:6px}.quick-month-item{padding:9px 4px}.quick-month-item .qm-label{font-size:10.5px}.quick-month-item .qm-value{font-size:13.5px;margin-top:4px}}
+.quick-month{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;padding:9px 6px;border-radius:12px;background:var(--primary-soft);margin-top:9px;font-size:12px;line-height:1.25;overflow:hidden}.quick-month .qm-item{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2px 7px}.quick-month .qm-item+.qm-item{border-left:1px solid rgba(15,91,77,.12)}.quick-month .qm-label{display:block;min-height:30px;color:var(--ink-soft);font-size:11.5px;line-height:1.3;white-space:normal}.quick-month b{display:block;margin-top:3px;color:var(--primary);font-size:14px;line-height:1.2;white-space:nowrap;font-variant-numeric:tabular-nums}.quick-month .qm-value{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis}@media(max-width:420px){.quick-month{padding:8px 3px}.quick-month .qm-item{padding:2px 4px}.quick-month .qm-label{font-size:10.5px;min-height:28px}.quick-month b{font-size:13px}}
 @media(max-width:650px){.summary-grid{grid-template-columns:1fr 1fr}.summary-card:last-child{grid-column:1/-1}.tool-btn{padding:0 10px}}
 
 
 .market-panel{overflow:hidden;padding:0}.market-ticker-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#fff,#F6F8F7)}.market-ticker-title{font-size:12.5px;font-weight:800;color:var(--primary);white-space:nowrap}.market-subtitle{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.market-ticker-wrap{position:relative;overflow:hidden;width:100%;background:#fff}.market-ticker-row{position:relative;overflow:hidden;width:100%;border-bottom:1px solid #DDE7E3}.market-ticker-row:last-child{border-bottom:0}.market-ticker-row:before,.market-ticker-row:after{content:'';position:absolute;top:0;bottom:0;width:34px;z-index:2;pointer-events:none}.market-ticker-row:before{left:0;background:linear-gradient(90deg,#fff,transparent)}.market-ticker-row:after{right:0;background:linear-gradient(270deg,#fff,transparent)}.market-ticker-track{display:flex;width:max-content;will-change:transform}.market-ticker-track.stocks{animation:marketTickerStock 34s linear infinite}.market-ticker-track.etfs{animation:marketTickerStock 34s linear infinite}.market-ticker-wrap:hover .market-ticker-track,.market-ticker-wrap:active .market-ticker-track{animation-play-state:paused}.market-ticker-item{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-right:1px solid #DDE7E3;white-space:nowrap;font-size:13px}.market-ticker-item .ticker{font-weight:900;color:var(--primary);font-size:13.5px}.market-ticker-item .group{font-size:11px;font-weight:800;color:#66736E;background:#E7F2EF;border-radius:999px;padding:2px 5px}.market-ticker-item .name{color:var(--muted);font-size:12px;max-width:125px;overflow:hidden;text-overflow:ellipsis}.market-ticker-item .price{font-weight:800;font-variant-numeric:tabular-nums}.market-ticker-item .chg{font-weight:800;font-variant-numeric:tabular-nums}.market-ticker-item.up .chg{color:#1B8A62}.market-ticker-item.down .chg{color:#D95C70}.market-ticker-item.na .price,.market-ticker-item.na .chg{color:var(--muted)}.market-ticker-item .dot{width:5px;height:5px;border-radius:50%;background:#9AA6A1;flex:0 0 auto}.market-ticker-item.up .dot{background:#1B8A62}.market-ticker-item.down .dot{background:#D95C70}.market-row-label{display:inline-flex;align-items:center;justify-content:center;min-width:72px;padding:3px 7px;margin:0 5px 0 8px;border-radius:999px;font-size:11px;font-weight:900;background:#E7F2EF;color:var(--primary);position:relative;z-index:3}.market-row-label.etf{background:#F7F3E9;color:#9A8050}.market-row-label.stock{background:#EAF1FB;color:#3A5A8C}@keyframes marketTickerStock{from{transform:translateX(0)}to{transform:translateX(-50%)}}@media(prefers-reduced-motion:reduce){.market-ticker-track{animation:none}}@media(max-width:560px){.market-ticker-head{padding:8px 10px}.market-ticker-item{padding:8px 12px;font-size:12.5px}.market-ticker-item .name{display:none}.market-ticker-item .group{font-size:10.5px}.market-ticker-item .ticker{font-size:13px}.market-row-label{min-width:58px;font-size:10.5px;margin-left:5px}}
 .finance-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}.finance-toolbar .sub{font-size:12.5px;color:var(--ink-faint)}
-.finance-list-head{display:grid;grid-template-columns:1fr 76px 100px;gap:6px;padding:2px 12px 8px;font-size:12px;color:var(--ink-faint)}.finance-list-head .fsort{background:none;border:none;padding:0;font:inherit;font-size:12px;font-weight:800;color:inherit;display:flex;align-items:center;gap:3px;cursor:pointer}.finance-list-head .fsort:nth-child(2),.finance-list-head .fsort:nth-child(3){justify-content:flex-end}.finance-list-head .fsort.active{color:var(--primary)}.finance-list-head .fsort-arrow{font-size:11px}.finance-list{background:var(--surface);border:1px solid var(--line);border-radius:15px;overflow:hidden;box-shadow:0 2px 12px -8px rgba(15,91,77,.18)}.finance-row{display:grid;grid-template-columns:1fr 76px 100px;align-items:center;gap:6px;padding:11px 12px;border-bottom:1px solid var(--line);cursor:pointer}.finance-row:last-child{border-bottom:0}.finance-row:active{background:var(--primary-soft)}.finance-row-id{display:flex;align-items:center;gap:9px;min-width:0}.finance-badge{width:32px;height:32px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff}.finance-row-text{min-width:0}.finance-row-symbol{font-weight:900;font-size:13.5px;color:var(--ink)}.finance-row-name{font-size:12px;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.finance-row-price{text-align:right;font-weight:800;font-size:13px;font-variant-numeric:tabular-nums}.finance-row-price.finance-na{color:var(--ink-faint);font-weight:600}.finance-row-pct{justify-self:end;font-size:12.5px;font-weight:800;padding:4px 8px;border-radius:8px;text-align:center;min-width:66px;font-variant-numeric:tabular-nums}.finance-row-pct.up{background:#E4F6EE;color:#1B8A62}.finance-row-pct.down{background:#FDECEF;color:#D95C70}.finance-row-pct.na{background:#F2F4F3;color:var(--ink-faint)}.finance-section-title{font-size:13.5px;font-weight:900;color:var(--primary);margin:16px 0 8px}.market-manager-list{display:flex;flex-direction:column;gap:7px}.market-manager-row{display:grid;grid-template-columns:70px 1fr 105px 85px 80px 34px;gap:7px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:11px;background:var(--surface)}.market-manager-row input,.market-manager-row select{width:100%;border:1px solid var(--line);border-radius:8px;padding:7px;font:inherit;font-size:12px;background:var(--surface);color:var(--ink)}.market-manager-row .remove{border:none;background:#FDECEF;color:#C24D63;border-radius:8px;height:30px;cursor:pointer}.market-manager-head{display:grid;grid-template-columns:70px 1fr 105px 85px 80px 34px;gap:7px;font-size:11px;color:var(--ink-faint);padding:0 8px}.finance-empty{padding:20px;text-align:center;color:var(--ink-faint);font-size:12.5px}.finance-modal .fund-detail-sheet{max-width:560px}.finance-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.finance-detail-kpi{padding:10px;border:1px solid var(--line);border-radius:11px;background:var(--surface)}.finance-detail-kpi .k{font-size:11px;color:var(--ink-faint)}.finance-detail-kpi .v{font-size:13.5px;font-weight:800;margin-top:3px}.finance-manager-actions{display:flex;gap:8px;margin-top:10px}.finance-manager-actions .btn{flex:1}.finance-note{font-size:12px;color:var(--ink-faint);line-height:1.5;margin-top:8px}
+.finance-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:#E9EFED;border-radius:13px;padding:4px;margin-bottom:10px}.finance-seg button{border:0;background:transparent;padding:8px 5px;border-radius:10px;font-weight:900;color:#61716D;font-size:12px;cursor:pointer;font-family:inherit}.finance-seg button.active{background:#fff;color:var(--primary);box-shadow:0 2px 8px rgba(35,73,65,.12)}
+.finance-list-head{display:grid;grid-template-columns:1fr 76px 100px;gap:6px;padding:2px 12px 8px;font-size:12px;color:var(--ink-faint);font-weight:800}.finance-list-head span:nth-child(2),.finance-list-head span:nth-child(3){text-align:right}.finance-list{background:var(--surface);border:1px solid var(--line);border-radius:15px;overflow:hidden;box-shadow:0 2px 12px -8px rgba(15,91,77,.18)}.finance-row{display:grid;grid-template-columns:1fr 76px 100px;align-items:center;gap:6px;padding:11px 12px;border-bottom:1px solid var(--line);cursor:pointer}.finance-row:last-child{border-bottom:0}.finance-row:active{background:var(--primary-soft)}.finance-row-id{display:flex;align-items:center;gap:9px;min-width:0}.finance-badge{width:32px;height:32px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff}.finance-row-text{min-width:0}.finance-row-symbol{font-weight:900;font-size:13.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.finance-row-name{font-size:12px;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.finance-row-owner{font-size:10px;color:#84938F;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.finance-row-price{text-align:right;font-weight:800;font-size:13px;font-variant-numeric:tabular-nums}.finance-row-price.finance-na{color:var(--ink-faint);font-weight:600}.finance-row-pct{justify-self:end;font-size:12.5px;font-weight:800;padding:4px 8px;border-radius:8px;text-align:center;min-width:66px;font-variant-numeric:tabular-nums}.finance-row-pct.up{background:#E4F6EE;color:#1B8A62}.finance-row-pct.down{background:#FDECEF;color:#D95C70}.finance-row-pct.na{background:#F2F4F3;color:var(--ink-faint)}.finance-section-title{font-size:13.5px;font-weight:900;color:var(--primary);margin:16px 0 8px}.market-manager-list{display:flex;flex-direction:column;gap:7px}.market-manager-row{display:grid;grid-template-columns:70px 1fr 105px 85px 80px 34px;gap:7px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:11px;background:var(--surface)}.market-manager-row input,.market-manager-row select{width:100%;border:1px solid var(--line);border-radius:8px;padding:7px;font:inherit;font-size:12px;background:var(--surface);color:var(--ink)}.market-manager-row .remove{border:none;background:#FDECEF;color:#C24D63;border-radius:8px;height:30px;cursor:pointer}.market-manager-head{display:grid;grid-template-columns:70px 1fr 105px 85px 80px 34px;gap:7px;font-size:11px;color:var(--ink-faint);padding:0 8px}.finance-empty{padding:20px;text-align:center;color:var(--ink-faint);font-size:12.5px}.finance-modal .fund-detail-sheet{max-width:560px}.finance-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.finance-detail-kpi{padding:10px;border:1px solid var(--line);border-radius:11px;background:var(--surface)}.finance-detail-kpi .k{font-size:11px;color:var(--ink-faint)}.finance-detail-kpi .v{font-size:13.5px;font-weight:800;margin-top:3px}.finance-manager-actions{display:flex;gap:8px;margin-top:10px}.finance-manager-actions .btn{flex:1}.finance-note{font-size:12px;color:var(--ink-faint);line-height:1.5;margin-top:8px}
 @media(max-width:650px){.market-manager-row,.market-manager-head{grid-template-columns:62px 1fr 88px 70px 60px 32px}.market-manager-row{padding:6px;gap:5px}.market-manager-head{gap:5px}.finance-detail-grid{grid-template-columns:1fr 1fr}.finance-list-head,.finance-row{grid-template-columns:1fr 64px 84px}.finance-row-name{display:none}}
+
+
+/* ===== V39 FINANCE MAIN UI PREVIEW ===== */
+.finance-main-panel{padding:14px;background:linear-gradient(180deg,#ffffff 0%,#f7faf9 100%)}
+.finance-main-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.finance-main-brand{display:flex;align-items:center;gap:10px;min-width:0}
+.finance-main-icon{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;background:var(--primary-soft);color:var(--primary);font-size:20px;border:1px solid #D8E9E4;box-shadow:0 4px 12px rgba(15,91,77,.08)}
+.finance-main-title{font-size:18px;font-weight:950;letter-spacing:-.2px;color:var(--ink)}
+.finance-main-sub{font-size:11.5px;color:var(--ink-faint);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.finance-main-actions{display:flex;gap:6px;flex:none}
+.finance-main-actions .tool-btn{height:36px;border-radius:11px;padding:0 11px;background:#fff;box-shadow:0 2px 8px rgba(15,91,77,.06)}
+.finance-market-status{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 11px;margin-bottom:10px;border:1px solid #DCE9E5;border-radius:12px;background:#F2F8F6;color:var(--ink-soft);font-size:11.5px}
+.finance-market-status .status-left{display:flex;align-items:center;gap:6px;min-width:0}
+.finance-market-status .live-dot{width:7px;height:7px;border-radius:50%;background:#35A978;box-shadow:0 0 0 3px rgba(53,169,120,.10);flex:none}
+.finance-market-status .status-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.finance-market-status .status-tag{font-weight:900;color:var(--primary);background:#fff;border:1px solid #D8E9E4;border-radius:999px;padding:3px 7px;white-space:nowrap}
+.finance-main-tabs{background:#E9EFED;border:1px solid #DFE9E5;border-radius:13px;padding:4px;margin-bottom:10px;box-shadow:inset 0 1px 2px rgba(15,91,77,.04)}
+.finance-main-tabs button{padding:9px 5px;font-size:12px}
+.finance-list-head{padding:3px 11px 7px;font-size:10.5px;letter-spacing:.15px;text-transform:uppercase}
+.finance-list{border-radius:14px;box-shadow:0 4px 16px -10px rgba(15,91,77,.22)}
+.finance-row{padding:10px 11px;transition:background .15s ease,transform .15s ease}
+.finance-row:hover{background:#F6FAF8}
+.finance-row-id{gap:9px}
+.finance-badge{width:34px;height:34px;border-radius:11px;font-size:11px;box-shadow:0 2px 7px rgba(15,91,77,.10)}
+.finance-row-symbol{font-size:13px}
+.finance-row-name{font-size:11.5px;margin-top:1px}
+.finance-row-owner{display:inline-flex;margin-top:3px;padding:2px 6px;border-radius:999px;background:#F0F5F3;color:#71817C;font-size:9.5px;width:max-content;max-width:100%}
+.finance-row-price{font-size:13px}
+.finance-row-pct{min-width:62px;padding:4px 7px;border-radius:9px;font-size:11.5px}
+.finance-note{padding:8px 2px 1px;margin-top:3px;font-size:10.5px;color:#8A9894}
+@media(max-width:650px){
+ .finance-main-panel{padding:12px}
+ .finance-main-head{align-items:flex-start}
+ .finance-main-icon{width:38px;height:38px;border-radius:11px;font-size:18px}
+ .finance-main-title{font-size:16px}
+ .finance-main-sub{font-size:10.5px;max-width:190px}
+ .finance-main-actions .tool-btn{height:34px;padding:0 9px;font-size:11.5px}
+ .finance-market-status{padding:8px 9px}
+ .finance-row{padding:10px 9px}
+}
 
 </style>
 <script src="auth.js"></script>
-<style id="v39-finance-final-ui">.finance-main-panel{padding:14px;background:linear-gradient(180deg,#fff,#f7faf9)}.finance-main-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.finance-main-brand{display:flex;align-items:center;gap:9px;min-width:0}.finance-main-icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#e8f3ef;color:#0f6958;border:1px solid #d4e6e0}.finance-main-title{font-size:18px;font-weight:950}.finance-main-sub{font-size:10.5px;color:#84918d}.finance-main-actions{display:flex;gap:6px}.finance-main-actions .tool-btn{height:34px;padding:0 10px;border-radius:10px}.finance-main-actions #marketManagerBtn{background:#0f6958;color:#fff;border-color:#0f6958}.finance-market-status{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;margin-bottom:9px;border:1px solid #dce9e5;border-radius:12px;background:#f3f8f6;font-size:10.5px;color:#6e7e79}.finance-market-status .status-left{display:flex;align-items:center;gap:6px}.live-dot{width:7px;height:7px;border-radius:50%;background:#35a978}.status-tag{font-weight:900;color:#0f6958;background:#fff;border:1px solid #d6e7e1;border-radius:999px;padding:3px 7px}.finance-main-tabs{background:#eaf0ee;border:1px solid #dfe8e5;border-radius:12px;padding:3px;margin-bottom:9px}.finance-main-tabs button{font-size:12px;padding:8px 4px}.finance-list-head{padding:2px 10px 6px;font-size:10px}.finance-list{border-radius:14px}.finance-row{padding:9px 10px}.finance-badge{width:34px;height:34px;border-radius:10px}.finance-row-symbol{font-size:12.5px}.finance-row-name{font-size:10.5px}.finance-row-price{font-size:12.5px}.finance-row-pct{font-size:10.5px;min-width:58px;padding:4px 6px;border-radius:8px}@media(max-width:650px){.finance-main-panel{padding:11px}.finance-main-title{font-size:16px}.finance-main-sub{font-size:10px}.finance-main-actions .tool-btn{padding:0 8px;font-size:11px}.finance-row{padding:9px 8px}}</style><style id="v39-manager-final-ui">.v39-manager-sheet{border-radius:22px!important;padding:15px!important}.v39-manager-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.v39-manager-top .fund-detail-close{position:static}.v39-manager-tabs{margin:4px 0 9px}.v39-manager-tabs button{font-size:12px;padding:8px 4px}.v39-manager-typehint{margin:8px 0;padding:9px 11px;border:1px dashed #cfe1dc;border-radius:13px;background:#f8fcfb;display:flex;align-items:center;gap:8px;color:#35685d}.v39-manager-typehint span{width:27px;height:27px;border-radius:8px;display:grid;place-items:center;background:#e4f2ee;color:#0c715f;font-weight:950}.v39-manager-typehint b{font-size:12px}.v39-manager-typehint em{font-style:normal;font-size:10px;color:#8a9894;margin-left:auto}.v39-manager-addbar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 1px}.v39-symbol-label{font-size:12px;font-weight:900}.v39-symbol-hint{font-size:10px;color:#8a9894}.v39-add-fund-btn{padding:7px 12px!important;font-size:11px!important;border-radius:9px!important}.v39-manager-sheet .market-manager-list{max-height:52vh;overflow:auto}@media(max-width:650px){.v39-manager-sheet{width:calc(100% - 16px)!important;padding:12px!important}.v39-manager-typehint em{display:none}.v39-manager-sheet .market-manager-head{display:none}.v39-manager-sheet .market-manager-list{max-height:55vh}.v39-manager-sheet .market-manager-row{grid-template-columns:1fr auto!important}.v39-manager-sheet .market-manager-row>*:nth-child(3),.v39-manager-sheet .market-manager-row>*:nth-child(4){display:none}}</style></head>
+<style id="v39-manager-redesign">
+.v39-manager-sheet{max-width:920px!important;width:96%!important;padding:0!important;overflow:hidden;background:#f7fbfa!important;border-radius:24px!important}
+.v39-manager-head{display:grid;grid-template-columns:44px 1fr 42px;align-items:center;gap:10px;padding:18px 18px 14px;background:linear-gradient(135deg,#0d705f,#087864);color:#fff}
+.v39-manager-back,.v39-manager-help{width:40px;height:40px;border:0;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;font-size:30px;line-height:1;cursor:pointer}
+.v39-manager-help{font-size:20px;font-weight:900}
+.v39-manager-title{font-size:22px;font-weight:900;letter-spacing:-.2px}
+.v39-manager-sub{font-size:12px;opacity:.82;margin-top:2px}
+.v39-manager-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:12px 14px 10px;background:#fff;border-bottom:1px solid #e2ece9;position:sticky;top:0;z-index:3}
+.v39-manager-tabs button{border:1px solid #dce8e5;background:#f4f8f7;color:#47605a;border-radius:13px;padding:11px 8px;font:inherit;font-weight:850;cursor:pointer;white-space:nowrap}
+.v39-manager-tabs button.active{background:#0c715f;color:#fff;border-color:#0c715f;box-shadow:0 5px 14px -8px rgba(10,112,95,.7)}
+.v39-manager-tabs button span{margin-right:5px}.v39-manager-tabs button b{margin-left:4px;padding:2px 7px;border-radius:99px;background:rgba(255,255,255,.2)}
+.v39-manager-tabs button:not(.active) b{background:#e4efec;color:#0c715f}
+.v39-manager-addbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px 8px}
+.v39-manager-section-title{font-size:16px;font-weight:900;color:#163b34}.v39-manager-section-sub{font-size:11.5px;color:#82928e;margin-top:2px}
+.v39-add-fund-btn{border:0;background:#0c715f;color:#fff;border-radius:11px;padding:10px 13px;font:inherit;font-size:12.5px;font-weight:900;cursor:pointer;white-space:nowrap;box-shadow:0 5px 12px -8px #0c715f}
+.v39-manager-symbol-box{margin:0 16px 10px;padding:12px;border:1px solid #dce9e6;border-radius:15px;background:#fff}.v39-symbol-label{font-size:11.5px;font-weight:850;color:#55716a;margin-bottom:6px}.v39-symbol-row{display:grid;grid-template-columns:1fr auto;gap:7px}.v39-symbol-row input{min-width:0;border:1px solid #cfdeda;border-radius:11px;padding:10px 12px;font:inherit;background:#fbfdfc}.v39-symbol-add{border:0;border-radius:11px;background:#0c715f;color:#fff;padding:0 18px;font:inherit;font-weight:900;cursor:pointer}.v39-symbol-hint{font-size:10.5px;color:#8a9894;margin-top:6px;line-height:1.45}
+.v39-manager-list-head{display:grid;grid-template-columns:minmax(190px,1.6fr) minmax(120px,1fr) 90px 34px;gap:8px;padding:4px 16px 6px;color:#82928e;font-size:10.5px;font-weight:850}.v39-manager-list{padding:0 16px 10px;max-height:min(53vh,560px);overflow:auto;display:flex;flex-direction:column;gap:8px}.v39-manager-card{display:grid;grid-template-columns:minmax(190px,1.6fr) minmax(120px,1fr) 90px 34px;gap:8px;align-items:center;padding:11px;border:1px solid #dfeae7;border-radius:15px;background:#fff;box-shadow:0 2px 10px -9px rgba(12,70,60,.5)}
+.v39-card-main{display:flex;align-items:center;gap:10px;min-width:0}.v39-card-logo{width:38px;height:38px;border-radius:11px;background:#eaf4f1;color:#0c715f;display:grid;place-items:center;font-weight:950;font-size:11px;flex:0 0 auto;border:1px solid #d4e6e1}.v39-card-symbol{font-weight:950;font-size:13.5px;color:#193c35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v39-card-name{font-size:10.5px;color:#91a09c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}.v39-card-meta{font-size:10px;color:#758680;margin-top:3px}.v39-owner-select{width:100%;border:1px solid #d6e4e0;border-radius:9px;padding:8px;background:#fff;color:#24443e;font:inherit;font-size:11.5px}.v39-card-status{justify-self:start;padding:5px 8px;border-radius:99px;background:#e6f6ee;color:#21835f;font-size:10.5px;font-weight:900;white-space:nowrap}.v39-card-status.off{background:#fcecef;color:#c15d6c}.v39-card-remove{width:32px;height:32px;border:0;border-radius:9px;background:#fff0f2;color:#c45467;font-size:19px;cursor:pointer}.v39-manager-save-row{padding:6px 16px}.v39-manager-save-row .btn{width:100%;border-radius:12px;padding:11px}.v39-manager-note{margin:2px 16px 10px;padding:11px 12px;border-radius:12px;background:#edf7f4;color:#5b7b73;font-size:10.5px;line-height:1.5}.v39-manager-close{display:block;width:calc(100% - 32px);margin:0 16px 16px;border:0;border-radius:12px;padding:11px;background:#e7f2ef;color:#0c715f;font:inherit;font-weight:900;cursor:pointer}
+@media(max-width:650px){.v39-manager-sheet{width:100%!important;max-width:none!important;border-radius:20px 20px 0 0!important}.v39-manager-title{font-size:20px}.v39-manager-sub{font-size:11px}.v39-manager-addbar{padding-top:12px}.v39-add-fund-btn{padding:9px 10px;font-size:11.5px}.v39-manager-list-head{display:none}.v39-manager-list{max-height:58vh;padding:0 12px 10px}.v39-manager-card{grid-template-columns:1fr 36px;gap:7px;padding:10px}.v39-card-main{grid-column:1}.v39-owner-select{grid-column:1;padding:8px}.v39-card-status{grid-column:1;justify-self:start}.v39-card-remove{grid-column:2;grid-row:1 / span 3;align-self:center}.v39-manager-symbol-box{margin-left:12px;margin-right:12px}.v39-manager-save-row,.v39-manager-note{margin-left:12px;margin-right:12px}.v39-manager-close{width:calc(100% - 24px);margin-left:12px;margin-right:12px}.v39-symbol-row{grid-template-columns:1fr 82px}.v39-symbol-add{padding:0 8px}}
+</style>
+
+<style id="v39-manager-final-preview">
+.v39-manager-typehint{margin:10px 16px 0;padding:10px 12px;border:1px dashed #cfe1dc;border-radius:14px;background:#f8fcfb;display:flex;align-items:center;gap:8px;color:#35685d}.v39-manager-typehint span{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:#e4f2ee;color:#0c715f;font-weight:950}.v39-manager-typehint b{font-size:12px}.v39-manager-typehint em{font-style:normal;font-size:10.5px;color:#8a9894;margin-left:auto}@media(max-width:650px){.v39-manager-typehint{margin:8px 12px 0;display:block}.v39-manager-typehint span{display:inline-grid;vertical-align:middle;margin-right:5px}.v39-manager-typehint b{vertical-align:middle}.v39-manager-typehint em{display:block;margin:4px 0 0 33px}}
+</style>
+</head>
 <body>
 
 <div class="topbar">
@@ -557,7 +621,7 @@
       <div class="brand-mark">₿</div>
       <div>
         <div class="brand-name">กองทุน</div>
-        <div class="brand-sub">พอร์ตการลงทุนรายเดือนของครอบครัว • V39.8.2 Full</div>
+        <div class="brand-sub">พอร์ตการลงทุนรายเดือนของครอบครัว • V39 Consolidated</div>
         <div class="last-updated" id="lastUpdated">อัปเดตล่าสุด: -</div>
       </div>
     </div>
@@ -593,13 +657,13 @@
 
     <div class="panel market-panel">
       <div class="market-ticker-head">
-        <div class="market-ticker-title">📈 US MARKET + ETF WATCH</div>
+        <div class="market-ticker-title">📈 ETF WATCH</div>
         <div class="market-subtitle">Google Finance • ETF Watch • อาจล่าช้าสูงสุดประมาณ 20 นาที</div>
         <button class="tool-btn" id="marketRefreshBtn" style="padding:4px 8px;font-size:12px">↻</button>
       </div>
       <div class="market-ticker-wrap" id="marketTickerWrap">
-        <div class="market-ticker-row"><span class="market-row-label stock">TOP 10 หุ้น</span><div class="market-ticker-track stocks" id="marketStockGrid"></div></div>
         <div class="market-ticker-row"><span class="market-row-label etf">ETF WATCH</span><div class="market-ticker-track etfs" id="marketEtfGrid"></div></div>
+      <div class="market-ticker-row"><span class="market-row-label stock">STOCK WATCH</span><div class="market-ticker-track stocks" id="marketStockGrid"></div></div>
       </div>
     </div>
 
@@ -628,18 +692,23 @@
 
   <!-- ============ FINANCE ============ -->
   <section id="view-finance" hidden>
-    <div class="panel">
-      <div class="finance-toolbar">
-        <div><div class="panel-title" style="margin-bottom:2px">📈 Market Watch</div><div class="sub">ข้อมูลจาก Google Sheets / GOOGLEFINANCE • ราคาอาจล่าช้าตามข้อจำกัดของ Google Finance</div></div>
-        <div style="display:flex;gap:7px"><button class="tool-btn" id="financeRefreshBtn">↻ อัปเดต</button><button class="tool-btn" id="marketManagerBtn">⚙ จัดการ</button></div>
+    <div class="panel finance-main-panel">
+      <div class="finance-main-head">
+        <div class="finance-main-brand">
+          <div class="finance-main-icon">📈</div>
+          <div style="min-width:0"><div class="finance-main-title">Finance</div><div class="finance-main-sub">Market Watch • My funds • ETF • Stock</div></div>
+        </div>
+        <div class="finance-main-actions"><button class="tool-btn" id="financeRefreshBtn">↻ อัปเดต</button></div>
       </div>
-      <div class="finance-section-title">⭐ กองทุน / ETF ที่ติดตาม</div>
-      <div class="finance-list-head" id="financeSortHead">
-        <button type="button" class="fsort" data-key="name">ชื่อ / ประเภท</button>
-        <button type="button" class="fsort" data-key="price">ราคา<span class="fsort-arrow"></span></button>
-        <button type="button" class="fsort" data-key="changepct">% เปลี่ยนแปลง<span class="fsort-arrow"></span></button>
+      <div class="finance-market-status"><div class="status-left"><span class="live-dot"></span><span class="status-text">ข้อมูลจาก Google Sheets / GOOGLEFINANCE</span></div><span class="status-tag">Market</span></div>
+      <div class="finance-seg finance-main-tabs" id="financeSeg">
+        <button type="button" class="active" data-tab="fund">My funds</button>
+        <button type="button" data-tab="etf">ETF</button>
+        <button type="button" data-tab="stock">Stock</button>
       </div>
+      <div class="finance-list-head"><span>ชื่อ</span><span>ราคา/NAV</span><span>เปลี่ยนแปลง</span></div>
       <div class="finance-list" id="financeCards"></div>
+      <div class="finance-note" id="financeHint">NAV ของ My funds ใช้ NAV จาก FundMaster/ฐานข้อมูลเท่านั้น • ไม่มีข้อมูล = รออัปเดต</div>
     </div>
   </section>
 
@@ -825,7 +894,7 @@
 
 
 <!-- ============ MARKET MANAGER MODAL ============ -->
-<div class="modal-overlay" id="marketManagerModal" hidden><div class="modal-sheet v39-manager-sheet" style="max-width:900px;width:96%"><div class="v39-manager-top"><div><p class="modal-title">⚙ จัดการ</p><p class="modal-sub">เพิ่มรายการใหม่ที่ยังไม่มีในระบบ • กองทุน / Stock / ETF</p></div><button class="fund-detail-close" id="marketManagerClose" type="button">×</button></div><div class="finance-seg v39-manager-tabs" id="managerSeg"><button type="button" class="active" data-tab="fund">▤ กองทุน <b id="managerFundCount">0</b></button><button type="button" data-tab="stock">◈ Stock</button><button type="button" data-tab="etf">◉ ETF</button></div><div class="v39-manager-typehint"><span>＋</span><b id="managerSectionTitle">กองทุน</b><em>เลือกประเภท แล้วเพิ่มรายการใหม่</em></div><div class="v39-manager-addbar"><div><div class="v39-symbol-label">New <span id="managerAddType">กองทุน</span></div><div class="v39-symbol-hint">ใช้ Symbol เพื่อค้นหาและเพิ่มรายการ</div></div><button class="btn btn-primary v39-add-fund-btn" id="marketAddBtn" type="button">＋ เพิ่ม</button></div><div class="market-manager-head"><span>Ticker</span><span>Name</span><span>Exchange</span><span>Group</span><span>Active</span><span></span></div><div class="market-manager-list" id="marketManagerList"></div><div class="finance-manager-actions"><button class="btn btn-primary" id="marketSaveBtn">บันทึก</button></div><div class="finance-note" id="managerNote">ค้นหา Symbol ใหม่ได้จากช่องเดียว • ระบบจะกัน Symbol ซ้ำก่อนเพิ่ม</div></div></div>
+
 
 <!-- ============ FINANCE DETAIL MODAL ============ -->
 <div class="fund-detail-overlay finance-modal" id="financeDetailOverlay" hidden>
@@ -908,6 +977,21 @@ function fundNavInfo(f){
   const base=f.name.replace(/\s*\([^)]*\)\s*$/,'');
   return FUND_NAV[base] || null;
 }
+(function loadWebFundRegistry(){
+ try{const saved=JSON.parse(localStorage.getItem('fund_master_web_registry_v1')||'null');if(saved&&typeof saved==='object'){Object.entries(saved).forEach(([k,v])=>{FUND_MASTER[k]={...(FUND_MASTER[k]||{}),...v};});}}catch(e){}
+})();
+
+// Web-added fund registry: funds created from Finance survive refresh and are merged
+// with the built-in/Google Sheet FundMaster without deleting existing records.
+(function loadWebFundRegistry(){
+  try{
+    const saved=JSON.parse(localStorage.getItem('fund_master_web_registry_v1')||'{}');
+    Object.entries(saved||{}).forEach(([code,m])=>{
+      if(code && m) FUND_MASTER[code]={...(FUND_MASTER[code]||{}),...m};
+    });
+  }catch(e){ console.warn('web fund registry',e); }
+})();
+
 function canonicalFundCode(name){
   const raw=String(name||'').trim();
   if(FUND_ALIASES[raw]) return FUND_ALIASES[raw];
@@ -1496,8 +1580,9 @@ function openFundDetail(fundId){
   document.getElementById('detailPct').textContent=Math.round(pct)+'%';
   document.getElementById('detailRemain').textContent=pct>=100?'ถึงเป้าหมายแล้ว':'เหลือ '+fmtInt(Math.max(0,target-actual));
   document.getElementById('detailFill').style.width=Math.min(100,pct)+'%';
-  const plan=Number(yd.planMonths?.[currentMonthIndex()])||0, tm=currentMonthInvestmentForFund(f);
-  document.getElementById('detailMonthlyPlan').innerHTML=`<div class="quick-month-item"><span class="qm-label">เดือนนี้ควรลงทุน</span><span class="qm-value">${fmtInt(plan)}</span></div><div class="quick-month-item"><span class="qm-label">ลงทุนไปแล้ว</span><span class="qm-value">${fmtInt(tm)}</span></div><div class="quick-month-item remain"><span class="qm-label">เหลือ</span><span class="qm-value">${fmtInt(Math.max(0,plan-tm))}</span></div>`;
+  const plan=Number(yd.target||0)/12, tm=Number(yd.planMonths?.[currentMonthIndex()]||0), diff=plan-tm;
+  const remainText=diff===0?'0':(diff>0?`ยังขาด ${fmtInt(diff)}`:`ลงเกิน ${fmtInt(Math.abs(diff))}`);
+  document.getElementById('detailMonthlyPlan').innerHTML=`<div class="qm-item"><span class="qm-label">เดือนนี้ควรลงทุน</span><b class="qm-value">${fmtInt(plan)}</b></div><div class="qm-item"><span class="qm-label">ลงทุนแล้ว</span><b class="qm-value">${fmtInt(tm)}</b></div><div class="qm-item"><span class="qm-label">เหลือ</span><b class="qm-value">${remainText}</b></div>`;
   const fb=document.getElementById('detailFavoriteBtn'); fb.textContent=f.favorite?'★ อยู่ในรายการโปรด':'☆ เพิ่มรายการโปรด';
   renderHistory(f);
   window.__detailFundId=fundId;
@@ -1511,6 +1596,9 @@ function openFundDetail(fundId){
       const yd2=yearData(f,selectedYear,true);
       yd2.planMonths=yd2.planMonths||{};
       yd2.planMonths[month]=value;
+      // Detail page: keep the monthly actual value and transaction history in sync
+      // so the summary strip above updates immediately after editing the month.
+      syncMonthlyCellToTransactions(f, selectedYear, month, value);
       saveData(DATA);
       updateRowComputed(f.id);
       renderHero(); renderAllocation(); renderSmartSummary(); renderFundGroups();
@@ -1589,18 +1677,28 @@ document.getElementById('addYearBtn').addEventListener('click', ()=>{
 });
 
 /* ================= BOTTOM NAV SWITCH ================= */
+const LAST_VIEW_KEY = 'mff_last_view';
+function activateView(view, opts){
+  opts = opts || {};
+  const valid = ['dashboard','table','finance'];
+  if(!valid.includes(view)) view = 'dashboard';
+  document.querySelectorAll('.bn-item[data-view]').forEach(b=>b.classList.toggle('active', b.dataset.view===view));
+  document.getElementById('view-dashboard').hidden = view!=='dashboard';
+  document.getElementById('view-table').hidden = view!=='table';
+  document.getElementById('view-finance').hidden = view!=='finance';
+  if(view==='finance'){renderFinanceCards(); if(sheetsToken&&sheetId) pullMarketWatch();}
+  try{ localStorage.setItem(LAST_VIEW_KEY, view); }catch(e){}
+  if(!opts.silent) window.scrollTo({top:0,behavior:'smooth'});
+}
 document.querySelectorAll('.bn-item[data-view]').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.bn-item[data-view]').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    const view = btn.dataset.view;
-    document.getElementById('view-dashboard').hidden = view!=='dashboard';
-    document.getElementById('view-table').hidden = view!=='table';
-    document.getElementById('view-finance').hidden = view!=='finance';
-    if(view==='finance'){renderFinanceCards(); if(sheetsToken&&sheetId) pullMarketWatch();}
-    window.scrollTo({top:0,behavior:'smooth'});
-  });
+  btn.addEventListener('click', ()=> activateView(btn.dataset.view));
 });
+/* คืนหน้าล่าสุดที่ผู้ใช้เปิดค้างไว้หลังรีเฟรช แทนที่จะเด้งกลับหน้าแรกเสมอ */
+(function restoreLastView(){
+  let saved=null;
+  try{ saved = localStorage.getItem(LAST_VIEW_KEY); }catch(e){}
+  if(saved) activateView(saved, {silent:true});
+})();
 
 /* ================= INVEST MODAL ================= */
 const modalInvest = document.getElementById('modalInvest');
@@ -1730,23 +1828,32 @@ document.getElementById('exportBtn').addEventListener('click', ()=>{
 
 /* ================= MARKET WATCH / FINANCE ================= */
 const DEFAULT_MARKET_ASSETS=[
- {ticker:'AAPL',exchange:'NASDAQ',name:'Apple Inc.',group:'Top 10 หุ้น',active:true},
- {ticker:'MSFT',exchange:'NASDAQ',name:'Microsoft Corp.',group:'Top 10 หุ้น',active:true},
- {ticker:'NVDA',exchange:'NASDAQ',name:'NVIDIA Corp.',group:'Top 10 หุ้น',active:true},
- {ticker:'GOOGL',exchange:'NASDAQ',name:'Alphabet Inc. Class A',group:'Top 10 หุ้น',active:true},
- {ticker:'AMZN',exchange:'NASDAQ',name:'Amazon.com Inc.',group:'Top 10 หุ้น',active:true},
- {ticker:'META',exchange:'NASDAQ',name:'Meta Platforms Inc.',group:'Top 10 หุ้น',active:true},
- {ticker:'BRK.B',exchange:'NYSE',name:'Berkshire Hathaway Class B',group:'Top 10 หุ้น',active:true},
- {ticker:'AVGO',exchange:'NASDAQ',name:'Broadcom Inc.',group:'Top 10 หุ้น',active:true},
- {ticker:'TSLA',exchange:'NASDAQ',name:'Tesla Inc.',group:'Top 10 หุ้น',active:true},
- {ticker:'JPM',exchange:'NYSE',name:'JPMorgan Chase & Co.',group:'Top 10 หุ้น',active:true},
- {ticker:'VOO',exchange:'NYSEARCA',name:'Vanguard S&P 500 ETF',group:'กองทุนของพอร์ต',active:true},
- {ticker:'VXUS',exchange:'NASDAQ',name:'Vanguard Total International Stock ETF',group:'กองทุนของพอร์ต',active:true},
- {ticker:'QQQM',exchange:'NASDAQ',name:'Invesco NASDAQ 100 ETF',group:'กองทุนของพอร์ต',active:true},
- {ticker:'VT',exchange:'NYSEARCA',name:'Vanguard Total World Stock ETF',group:'กองทุนของพอร์ต',active:true},
+ {ticker:'AAPL',exchange:'NASDAQ',name:'Apple Inc.',group:'หุ้น',active:true},
+ {ticker:'MSFT',exchange:'NASDAQ',name:'Microsoft Corporation',group:'หุ้น',active:true},
+ {ticker:'NVDA',exchange:'NASDAQ',name:'NVIDIA Corporation',group:'หุ้น',active:true},
+ {ticker:'GOOGL',exchange:'NASDAQ',name:'Alphabet Inc.',group:'หุ้น',active:true},
+ {ticker:'AMZN',exchange:'NASDAQ',name:'Amazon.com Inc.',group:'หุ้น',active:true},
+ {ticker:'META',exchange:'NASDAQ',name:'Meta Platforms Inc.',group:'หุ้น',active:true},
+ {ticker:'BRK.B',exchange:'NYSE',name:'Berkshire Hathaway Inc.',group:'หุ้น',active:true},
+ {ticker:'AVGO',exchange:'NASDAQ',name:'Broadcom Inc.',group:'หุ้น',active:true},
+ {ticker:'TSLA',exchange:'NASDAQ',name:'Tesla Inc.',group:'หุ้น',active:true},
+ {ticker:'JPM',exchange:'NYSE',name:'JPMorgan Chase & Co.',group:'หุ้น',active:true},
+ {ticker:'VOO',exchange:'NYSEARCA',name:'Vanguard S&P 500 ETF',group:'ETF',active:true},
+ {ticker:'VXUS',exchange:'NASDAQ',name:'Vanguard Total International Stock ETF',group:'ETF',active:true},
+ {ticker:'SCHD',exchange:'NYSEARCA',name:'Schwab U.S. Dividend Equity ETF',group:'ETF',active:true},
+ {ticker:'VT',exchange:'NYSEARCA',name:'Vanguard Total World Stock ETF',group:'ETF',active:true},
+ {ticker:'QQQM',exchange:'NASDAQ',name:'Invesco NASDAQ 100 ETF',group:'ETF',active:true},
  {ticker:'VTI',exchange:'NYSEARCA',name:'Vanguard Total Stock Market ETF',group:'ETF',active:true}
 ];
 let MARKET_ASSETS=JSON.parse(localStorage.getItem('market_assets_v3982')||'null')||DEFAULT_MARKET_ASSETS.slice();
+try{
+  const webFundRegistry=JSON.parse(localStorage.getItem('fund_master_web_registry_v1')||'{}');
+  Object.entries(webFundRegistry||{}).forEach(([code,m])=>{
+    if(!MARKET_ASSETS.some(a=>String(a.ticker||'').toUpperCase()===String(code).toUpperCase())){
+      MARKET_ASSETS.push({ticker:code,exchange:'FUND',name:m.displayName||code,group:m.assetClass||'กองทุน',active:true,navPending:true});
+    }
+  });
+}catch(e){}
 let GF_DATA={};
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 function isETFAsset(a){
@@ -1756,6 +1863,8 @@ function isETFAsset(a){
 function isStockAsset(a){
  return !isETFAsset(a);
 }
+MARKET_ASSETS=MARKET_ASSETS.map(a=>({active:true,...a}));
+localStorage.setItem('market_assets_v3982',JSON.stringify(MARKET_ASSETS));
 // A device/Sheet that was set up before Top 10 หุ้น existed only ever saved ETF tickers
 // (in localStorage and/or the Google Sheet's MarketWatch tab). Without this, that cached
 // list silently wins over the new defaults and the Top 10 row stays permanently empty.
@@ -1774,21 +1883,18 @@ function mergeDefaultAssets(list){
  localStorage.setItem('market_top10_seeded_v1','1');
 })();
 function marketInitial(){
- const etfs=document.getElementById('marketEtfGrid'); const stocks=document.getElementById('marketStockGrid');
+ const etfs=document.getElementById('marketEtfGrid');
+ const stocks=document.getElementById('marketStockGrid');
  const item=(a,label)=>`<div class="market-ticker-item na privacy-number" data-market="${esc(a.ticker)}"><span class="dot"></span><span class="ticker">${esc(a.ticker)}</span><span class="group">${esc(label)}</span><span class="name">${esc(a.name)}</span><span class="price">—</span><span class="chg">รอข้อมูล</span></div>`;
- if(etfs){
-  const etfAssets=MARKET_ASSETS.filter(a=>a.active!==false && isETFAsset(a));
-  etfs.innerHTML=etfAssets.map(a=>item(a,'ETF')).join('')+etfAssets.map(a=>item(a,'ETF')).join('');
- }
- if(stocks){
-  const stockAssets=MARKET_ASSETS.filter(a=>a.active!==false && isStockAsset(a));
-  stocks.innerHTML=stockAssets.map(a=>item(a,'หุ้น')).join('')+stockAssets.map(a=>item(a,'หุ้น')).join('');
- }
+ const etfAssets=MARKET_ASSETS.filter(a=>a.active!==false && isETFAsset(a));
+ const stockAssets=MARKET_ASSETS.filter(a=>a.active!==false && !isETFAsset(a) && String(a.exchange||'').toUpperCase()!=='FUND');
+ if(etfs) etfs.innerHTML=etfAssets.map(a=>item(a,'ETF')).join('')+etfAssets.map(a=>item(a,'ETF')).join('');
+ if(stocks) stocks.innerHTML=stockAssets.map(a=>item(a,'STOCK')).join('')+stockAssets.map(a=>item(a,'STOCK')).join('');
 }
 function marketCard(a,data){const nodes=document.querySelectorAll(`[data-market="${CSS.escape(a.ticker)}"]`);nodes.forEach(c=>{if(!data||data.price==null||isNaN(Number(data.price))){c.classList.add('na');c.classList.remove('up','down');c.querySelector('.price').textContent='—';c.querySelector('.chg').textContent='ไม่พบข้อมูล';return;}const price=Number(data.price),ch=Number(data.change)||0,pct=Number(data.changepct)||0;c.classList.remove('na','up','down');c.classList.add(ch>=0?'up':'down');c.querySelector('.price').textContent='$'+price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});c.querySelector('.chg').textContent=(ch>=0?'▲ +':'▼ ')+ch.toFixed(2)+'  '+(pct>=0?'+':'')+pct.toFixed(2)+'%';});}
 function marketFormulaRows(){
  const rows=[['Ticker','Name','Exchange','Active','Group','Price','Change','Change %','Trade Time','Data Delay','Open','High','Low','Volume','Market Cap','P/E','EPS','52W High','52W Low']];
- MARKET_ASSETS.forEach(a=>{const sym=`${a.exchange}:${a.ticker}`;rows.push([a.ticker,a.name,a.exchange,a.active===false?'FALSE':'TRUE',a.group,`=IFERROR(GOOGLEFINANCE("${sym}","price"),"")`,`=IFERROR(GOOGLEFINANCE("${sym}","change"),"")`,`=IFERROR(GOOGLEFINANCE("${sym}","changepct"),"")`,`=IFERROR(GOOGLEFINANCE("${sym}","tradetime"),"")`,`=IFERROR(GOOGLEFINANCE("${sym}","datadelay"),"")`,`=IFERROR(GOOGLEFINANCE("${sym}","priceopen"),"")`,`=IFERROR(GOOGLEFINANCE("${sym}","high"),"")`,`=IFERROR(GOOGLEFINANCE("${sym}","low"),"")`,`=IFERROR(GOOGLEFINANCE("${sym}","volume"),"")`,`=IFERROR(GOOGLEFINANCE("${sym}","marketcap"),"")`,`=IFERROR(GOOGLEFINANCE("${sym}","pe"),"")`,`=IFERROR(GOOGLEFINANCE("${sym}","eps"),"")`,`=IFERROR(GOOGLEFINANCE("${sym}","high52"),"")`,`=IFERROR(GOOGLEFINANCE("${sym}","low52"),"")`]);}); return rows;
+ MARKET_ASSETS.forEach(a=>{const isFund=String(a.exchange||'').toUpperCase()==='FUND';const sym=`${a.exchange}:${a.ticker}`;const gf=(field)=>isFund?'':`=IFERROR(GOOGLEFINANCE("${sym}","${field}"),"")`;rows.push([a.ticker,a.name,a.exchange,a.active===false?'FALSE':'TRUE',a.group,gf('price'),gf('change'),gf('changepct'),gf('tradetime'),gf('datadelay'),gf('priceopen'),gf('high'),gf('low'),gf('volume'),gf('marketcap'),gf('pe'),gf('eps'),gf('high52'),gf('low52')]);}); return rows;
 }
 async function ensureMarketSheet(){
  if(!sheetsToken||!sheetId)return false; const meta=await getSpreadsheetMeta(),titles=(meta.sheets||[]).map(s=>s.properties.title);
@@ -1802,10 +1908,16 @@ async function pullMarketWatch(){
  if(!sheetsToken||!sheetId){
   const merged=mergeDefaultAssets(MARKET_ASSETS);
   if(merged.changed){MARKET_ASSETS=merged.list;localStorage.setItem('market_assets_v3982',JSON.stringify(MARKET_ASSETS));}
+  MARKET_ASSETS.forEach(x=>{if(String(x.exchange).toUpperCase()==='FUND'){const n=FUND_NAV[canonicalFundCode(x.ticker)]||{};if(n.nav!=null)GF_DATA[x.ticker]={price:n.nav,date:n.date,source:n.source};}});
   marketInitial();renderFinanceCards();return;
  }
  try{await ensureMarketSheet();const j=await sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values:batchGet?ranges=MarketWatch%21A2:S200`);const vals=j.valueRanges?.[0]?.values||[];
-  const next=[]; vals.forEach(r=>{if(!r[0])return;next.push({ticker:String(r[0]),name:String(r[1]||r[0]),exchange:String(r[2]||''),active:String(r[3]).toUpperCase()!=='FALSE',group:String(r[4]||'ETF'),price:r[5],change:r[6],changepct:r[7],tradetime:r[8],datadelay:r[9],open:r[10],high:r[11],low:r[12],volume:r[13],marketcap:r[14],pe:r[15],eps:r[16],high52:r[17],low52:r[18]});});
+  const next=[]; vals.forEach(r=>{if(!r[0])return;const ticker=String(r[0]).trim().toUpperCase();const exchange=String(r[2]||'').trim().toUpperCase();let group=String(r[4]||'').trim();if(!group) group=isETFAsset({ticker,exchange})?'ETF':(exchange==='FUND'?'กองทุน':'หุ้น');next.push({ticker,name:String(r[1]||r[0]),exchange,active:String(r[3]).toUpperCase()!=='FALSE',group,price:r[5],change:r[6],changepct:r[7],tradetime:r[8],datadelay:r[9],open:r[10],high:r[11],low:r[12],volume:r[13],marketcap:r[14],pe:r[15],eps:r[16],high52:r[17],low52:r[18]});});
+  // Allow users to add a new ticker directly in Google Sheets by entering only
+  // Ticker / Name / Exchange / Active / Group. If GOOGLEFINANCE cells are blank,
+  // populate the formulas automatically so the next pull can display the data.
+  const formulaRows=[]; vals.forEach((r,i)=>{const ticker=String(r[0]||'').trim().toUpperCase();const exchange=String(r[2]||'').trim().toUpperCase();if(!ticker||!exchange||exchange==='FUND'||r[5]!==undefined&&String(r[5]).trim()!=='')return;const sym=`${exchange}:${ticker}`;const gf=f=>`=IFERROR(GOOGLEFINANCE(\"${sym}\",\"${f}\"),\"\")`;formulaRows.push({row:i+2,values:[gf('price'),gf('change'),gf('changepct'),gf('tradetime'),gf('datadelay'),gf('priceopen'),gf('high'),gf('low'),gf('volume'),gf('marketcap'),gf('pe'),gf('eps'),gf('high52'),gf('low52')]});});
+  if(formulaRows.length){for(const fr of formulaRows){await sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values/MarketWatch!F${fr.row}:S${fr.row}?valueInputOption=USER_ENTERED`,{method:'PUT',body:JSON.stringify({range:`MarketWatch!F${fr.row}:S${fr.row}`,majorDimension:'ROWS',values:[fr.values]})});}}
   const alreadySeeded=localStorage.getItem('market_sheet_top10_seeded_v1');
   const merged=alreadySeeded?{list:next,changed:false}:mergeDefaultAssets(next);
   if(merged.changed){
@@ -1822,65 +1934,149 @@ async function pullMarketWatch(){
    localStorage.setItem('market_last_update',new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}));
    return;
   }
-  if(next.length){MARKET_ASSETS=next.map(x=>({ticker:x.ticker,name:x.name,exchange:x.exchange,active:x.active,group:x.group}));localStorage.setItem('market_assets_v3982',JSON.stringify(MARKET_ASSETS));GF_DATA={};next.forEach(x=>GF_DATA[x.ticker]=x);marketInitial();next.forEach(x=>marketCard(x,x));renderFinanceCards();}
+  if(next.length){const filtered=next;MARKET_ASSETS=filtered.map(x=>({ticker:x.ticker,name:x.name,exchange:x.exchange,active:x.active,group:x.group}));localStorage.setItem('market_assets_v3982',JSON.stringify(MARKET_ASSETS));GF_DATA={};filtered.forEach(x=>GF_DATA[x.ticker]=x);filtered.forEach(x=>{if(String(x.exchange).toUpperCase()==='FUND'){const code=canonicalFundCode(x.ticker);const n=FUND_NAV[code]||{};if(n.nav!=null){x.price=n.nav;x.changepct='';x.change='';GF_DATA[x.ticker]=x;}}});marketInitial();filtered.forEach(x=>marketCard(x,GF_DATA[x.ticker]||x));renderFinanceCards();}
   localStorage.setItem('market_last_update',new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}));
  }catch(e){console.warn('MarketWatch',e);marketInitial();renderFinanceCards();}
 }
 function moneyUSD(v){if(v===''||v==null||isNaN(Number(v)))return '—';return '$'+Number(v).toLocaleString('en-US',{maximumFractionDigits:2});}
-let financeSortKey=localStorage.getItem('finance_sort_key')||'default';
-let financeSortDir=Number(localStorage.getItem('finance_sort_dir'))||-1;
+function moneyNAV(v){if(v===''||v==null||isNaN(Number(v)))return null;return '฿'+Number(v).toLocaleString('th-TH',{minimumFractionDigits:4,maximumFractionDigits:4});}
 function financeBadgeColor(ticker){let h=0;const s=String(ticker||'');for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return PALETTE[h%PALETTE.length];}
-function financeSortValue(a,key){
- const d=GF_DATA[a.ticker]||{};
- if(key==='name') return String(a.ticker||'').toUpperCase();
- if(key==='price'){const v=Number(d.price);return(d.price===''||d.price==null||isNaN(v))?-Infinity:v;}
- if(key==='changepct'){const v=Number(d.changepct);return(d.changepct===''||d.changepct==null||isNaN(v))?-Infinity:v;}
- return 0;
+let financeTab=localStorage.getItem('finance_tab')||'fund';
+let managerTab=financeTab;
+// "My funds" is derived from the user's real portfolio (DATA.funds), not from manually
+// added Market Watch tickers, so it always reflects what's actually being invested in.
+function financeFundOwners(code){
+ const owners=new Set();
+ DATA.funds.forEach(f=>{if(canonicalFundCode(f.name)===code)owners.add(f.owner);});
+ return [...owners].join(' / ');
 }
-function financeSortedAssets(){
- const active=MARKET_ASSETS.filter(a=>a.active!==false);
- if(financeSortKey==='default')return active;
- return [...active].sort((x,y)=>{
-  const vx=financeSortValue(x,financeSortKey),vy=financeSortValue(y,financeSortKey);
-  if(typeof vx==='string')return financeSortDir*vx.localeCompare(vy);
-  return financeSortDir*(vx-vy);
+function financeMyFundsList(){
+ const map=new Map();
+ DATA.funds.forEach(f=>{
+  const code=canonicalFundCode(f.name);
+  if(!map.has(code))map.set(code,{ticker:code,name:FUND_MASTER[code]?.displayName||code,exchange:'FUND',group:FUND_MASTER[code]?.assetClass||'กองทุน'});
  });
+ return [...map.values()].map(x=>({...x,owner:financeFundOwners(x.ticker)}));
 }
-function setFinanceSort(key){
- if(financeSortKey===key){financeSortDir*=-1;}
- else{financeSortKey=key;financeSortDir=key==='name'?1:-1;}
- localStorage.setItem('finance_sort_key',financeSortKey);
- localStorage.setItem('finance_sort_dir',String(financeSortDir));
- renderFinanceCards();
-}
-function updateFinanceSortHeadUI(){
- document.querySelectorAll('#financeSortHead .fsort').forEach(btn=>{
-  const key=btn.dataset.key,on=key===financeSortKey;
-  btn.classList.toggle('active',on);
-  const arrow=btn.querySelector('.fsort-arrow');
-  if(arrow)arrow.textContent=on?(financeSortDir>0?'▲':'▼'):'';
- });
+function financeListForTab(tab){
+ if(tab==='fund')return financeMyFundsList();
+ if(tab==='etf')return MARKET_ASSETS.filter(a=>a.active!==false && isETFAsset(a));
+ return MARKET_ASSETS.filter(a=>a.active!==false && String(a.exchange).toUpperCase()!=='FUND' && !isETFAsset(a));
 }
 function financeRow(a){
- const d=GF_DATA[a.ticker]||{};const ok=d.price!==''&&d.price!=null&&!isNaN(Number(d.price));
- const ch=Number(d.change),pct=Number(d.changepct),up=ok&&ch>=0;
- const pctClass=!ok?'na':(up?'up':'down');
- const pctText=ok?((up?'▲ ':'▼ ')+(pct>=0?'+':'')+pct.toFixed(2)+'%'):'—';
+ const isFundTab=financeTab==='fund';
+ let priceText,pctText,pctClass,ok;
+ if(isFundTab){
+  const nav=FUND_NAV[a.ticker]||{};
+  const navText=moneyNAV(nav.nav);
+  ok=navText!=null;priceText=ok?navText:'รออัปเดต';pctText='—';pctClass='na';
+ }else{
+  const d=GF_DATA[a.ticker]||{};ok=d.price!==''&&d.price!=null&&!isNaN(Number(d.price));
+  const ch=Number(d.change),pct=Number(d.changepct),up=ok&&ch>=0;
+  pctClass=!ok?'na':(up?'up':'down');
+  pctText=ok?((up?'▲ ':'▼ ')+(pct>=0?'+':'')+pct.toFixed(2)+'%'):'—';
+  priceText=ok?moneyUSD(d.price):'รออัปเดต';
+ }
  const initials=String(a.ticker||'').replace(/[^A-Z0-9]/gi,'').slice(0,2).toUpperCase();
- return `<div class="finance-row" data-finance="${esc(a.ticker)}"><div class="finance-row-id"><div class="finance-badge" style="background:${financeBadgeColor(a.ticker)}">${esc(initials)}</div><div class="finance-row-text"><div class="finance-row-symbol">${esc(a.ticker)}</div><div class="finance-row-name">${esc(a.group||'')} · ${esc(a.name||'')}</div></div></div><div class="finance-row-price ${ok?'':'finance-na'}">${ok?moneyUSD(d.price):'—'}</div><div class="finance-row-pct ${pctClass}">${pctText}</div></div>`;
+ return `<div class="finance-row" data-finance="${esc(a.ticker)}"><div class="finance-row-id"><div class="finance-badge" style="background:${financeBadgeColor(a.ticker)}">${esc(initials)}</div><div class="finance-row-text"><div class="finance-row-symbol">${esc(a.ticker)}</div><div class="finance-row-name">${esc(a.name||'')}</div>${isFundTab&&a.owner?`<div class="finance-row-owner">${esc(a.owner)}</div>`:''}</div></div><div class="finance-row-price ${ok?'':'finance-na'}">${priceText}</div><div class="finance-row-pct ${pctClass}">${pctText}</div></div>`;
 }
-function renderFinanceCards(){const el=document.getElementById('financeCards');if(!el)return;const list=financeSortedAssets();el.innerHTML=list.length?list.map(financeRow).join(''):'<div class="finance-empty">ยังไม่มีรายการใน Market Board</div>';el.querySelectorAll('.finance-row').forEach(c=>c.addEventListener('click',()=>openFinanceDetail(c.dataset.finance)));updateFinanceSortHeadUI();}
-document.querySelectorAll('#financeSortHead .fsort').forEach(btn=>btn.addEventListener('click',()=>setFinanceSort(btn.dataset.key)));
-function openFinanceDetail(ticker){const a=MARKET_ASSETS.find(x=>x.ticker===ticker)||{};const d=GF_DATA[ticker]||{};document.getElementById('financeDetailName').textContent=a.name||ticker;document.getElementById('financeDetailSymbol').textContent=`${ticker} • ${a.exchange||''}`;const fields=[['Price',moneyUSD(d.price)],['Change',d.change===''||d.change==null?'—':Number(d.change).toFixed(2)],['Change %',d.changepct===''||d.changepct==null?'—':Number(d.changepct).toFixed(2)+'%'],['Open',moneyUSD(d.open)],['High',moneyUSD(d.high)],['Low',moneyUSD(d.low)],['Volume',d.volume?Number(d.volume).toLocaleString('en-US'):'—'],['Market Cap',d.marketcap?Number(d.marketcap).toLocaleString('en-US'):'—'],['P/E',d.pe||'—'],['EPS',d.eps||'—'],['52W High',moneyUSD(d.high52)],['52W Low',moneyUSD(d.low52)],['Trade Time',d.tradetime||'—'],['Data Delay',d.datadelay!=null&&d.datadelay!==''?d.datadelay+' min':'—']];document.getElementById('financeDetailGrid').innerHTML=fields.map(x=>`<div class="finance-detail-kpi"><div class="k">${x[0]}</div><div class="v">${esc(x[1])}</div></div>`).join('');document.getElementById('financeDetailOverlay').hidden=false;}
-function renderMarketManager(){const el=document.getElementById('marketManagerList');if(!el)return;el.innerHTML=MARKET_ASSETS.map((a,i)=>`<div class="market-manager-row" data-i="${i}"><input data-k="ticker" value="${esc(a.ticker)}"><input data-k="name" value="${esc(a.name)}"><input data-k="exchange" value="${esc(a.exchange)}"><input data-k="group" value="${esc(a.group)}"><select data-k="active"><option value="true" ${a.active!==false?'selected':''}>ใช่</option><option value="false" ${a.active===false?'selected':''}>ไม่</option></select><button class="remove" type="button" title="ลบ">×</button></div>`).join('');el.querySelectorAll('.remove').forEach(b=>b.addEventListener('click',()=>b.closest('.market-manager-row').remove()));}
-function readMarketManager(){return [...document.querySelectorAll('#marketManagerList .market-manager-row')].map(row=>{const get=k=>row.querySelector(`[data-k="${k}"]`)?.value?.trim()||'';return {ticker:get('ticker').toUpperCase(),name:get('name'),exchange:get('exchange').toUpperCase(),group:get('group')||'ETF',active:get('active')!=='false'};}).filter(a=>a.ticker);}
-async function saveMarketManager(){MARKET_ASSETS=readMarketManager();localStorage.setItem('market_assets_v3982',JSON.stringify(MARKET_ASSETS));marketInitial();renderFinanceCards();if(sheetsToken&&sheetId){await sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values/MarketWatch!A:S:clear`,{method:'POST',body:'{}'});await sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values/MarketWatch!A1?valueInputOption=USER_ENTERED`,{method:'PUT',body:JSON.stringify({range:'MarketWatch!A1',majorDimension:'ROWS',values:marketFormulaRows()})});await pullMarketWatch();}showToast('บันทึก Market Board แล้ว');}
+function renderFinanceCards(){const el=document.getElementById('financeCards');if(!el)return;const list=financeListForTab(financeTab);el.innerHTML=list.length?list.map(financeRow).join(''):'<div class="finance-empty">ยังไม่มีรายการ</div>';el.querySelectorAll('.finance-row').forEach(c=>c.addEventListener('click',()=>openFinanceDetail(c.dataset.finance)));
+ const hint=document.getElementById('financeHint');
+ if(hint)hint.textContent=financeTab==='fund'?'NAV ของ My funds ใช้ NAV จาก FundMaster/ฐานข้อมูลเท่านั้น • ไม่มีข้อมูล = รออัปเดต':'ราคาจาก Google Sheets / GOOGLEFINANCE • ไม่มีข้อมูล = รออัปเดต';
+}
+function setFinanceTab(tab){
+ financeTab=tab;localStorage.setItem('finance_tab',financeTab);
+ document.querySelectorAll('#financeSeg button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+ renderFinanceCards();
+}
+document.getElementById('financeSeg')?.addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(!b)return;setFinanceTab(b.dataset.tab);});
+function openFinanceDetail(ticker){
+ if(financeTab==='fund'){
+  const code=canonicalFundCode(ticker),m=FUND_MASTER[code]||{},n=FUND_NAV[code]||{};
+  const owner=financeFundOwners(code);
+  document.getElementById('financeDetailName').textContent=m.displayName||code;
+  document.getElementById('financeDetailSymbol').textContent=`${code}${owner?' • '+owner:''}`;
+  const navText=moneyNAV(n.nav);
+  const fields=[['NAV',navText||'รออัปเดต'],['วันที่ NAV',n.date||'—'],['แหล่งข้อมูล',n.source||'รอข้อมูล'],['ประเภท',m.assetClass||'กองทุน'],['บลจ.',m.manager||'—'],['สถานะ',navText?'อัปเดตจากฐานข้อมูลแล้ว':'รออัปเดตจากฐานข้อมูล']];
+  document.getElementById('financeDetailGrid').innerHTML=fields.map(x=>`<div class="finance-detail-kpi"><div class="k">${x[0]}</div><div class="v">${esc(x[1])}</div></div>`).join('');
+  document.getElementById('financeDetailOverlay').hidden=false;
+  return;
+ }
+ const a=MARKET_ASSETS.find(x=>x.ticker===ticker)||{};const d=GF_DATA[ticker]||{};document.getElementById('financeDetailName').textContent=a.name||ticker;document.getElementById('financeDetailSymbol').textContent=`${ticker} • ${a.exchange||''}`;const fields=[['Price',moneyUSD(d.price)],['Change',d.change===''||d.change==null?'—':Number(d.change).toFixed(2)],['Change %',d.changepct===''||d.changepct==null?'—':Number(d.changepct).toFixed(2)+'%'],['Open',moneyUSD(d.open)],['High',moneyUSD(d.high)],['Low',moneyUSD(d.low)],['Volume',d.volume?Number(d.volume).toLocaleString('en-US'):'—'],['Market Cap',d.marketcap?Number(d.marketcap).toLocaleString('en-US'):'—'],['P/E',d.pe||'—'],['EPS',d.eps||'—'],['52W High',moneyUSD(d.high52)],['52W Low',moneyUSD(d.low52)],['Trade Time',d.tradetime||'—'],['Data Delay',d.datadelay!=null&&d.datadelay!==''?d.datadelay+' min':'—']];document.getElementById('financeDetailGrid').innerHTML=fields.map(x=>`<div class="finance-detail-kpi"><div class="k">${x[0]}</div><div class="v">${esc(x[1])}</div></div>`).join('');document.getElementById('financeDetailOverlay').hidden=false;}
+function isLikelyThaiFundSymbol(symbol){
+ const t=String(symbol||'').trim().toUpperCase();
+ // Common Thai mutual-fund naming patterns. This is deliberately conservative:
+ // unknown symbols that do not look like Thai funds remain US stocks by default.
+ return /(?:RMF|SSF|THAI|ESG|ESGA|ESGE|FUND|INCOME|BOND|FIXED|BALANCED|COREPATH|WORLD|GOLD|PROPERTY|REIT|ASEAN|CHINA|JAPAN|INDIA|VIET|EMERGING|GLOBAL)/i.test(t) || /[ก-๙]/.test(t);
+}
+function marketAssetFromSymbol(symbol){
+ const ticker=String(symbol||'').trim().toUpperCase(); if(!ticker)return null;
+ const known=MARKET_ASSETS.find(a=>String(a.ticker).toUpperCase()===ticker)||DEFAULT_MARKET_ASSETS.find(a=>String(a.ticker).toUpperCase()===ticker);
+ if(known)return {...known};
+ const code=canonicalFundCode(ticker), fm=FUND_MASTER[code];
+ if(fm)return {ticker:code,exchange:'FUND',name:fm.displayName||ticker,group:fm.assetClass||'กองทุน',active:true};
+ if(isLikelyThaiFundSymbol(ticker)) return {ticker:code,exchange:'FUND',name:ticker,group:'กองทุน',active:true,navPending:true};
+ return {ticker,exchange:'NASDAQ',name:ticker,group:'หุ้น',active:true};
+}
+function fundMasterRowForAsset(a){
+ const code=canonicalFundCode(a.ticker), m=FUND_MASTER[code]||{};
+ const n=FUND_NAV[code]||{};
+ return [code,a.name||m.displayName||code,m.officialName||'',m.manager||'',m.assetClass||'กองทุน',n.nav??'',n.date??'',n.source??'รอข้อมูล NAV','TRUE'];
+}
+async function saveNewFundToFundMaster(a){
+ if(!a || String(a.exchange).toUpperCase()!=='FUND') return false;
+ const code=canonicalFundCode(a.ticker);
+ if(!code)return false;
+ // Keep only web-created metadata in the browser registry. Do not serialize the entire
+ // built-in FundMaster, otherwise a future app update could accidentally pin old data.
+ const registry=(()=>{try{return JSON.parse(localStorage.getItem('fund_master_web_registry_v1')||'{}')||{};}catch(e){return {};}})();
+ const meta={...(FUND_MASTER[code]||{}),displayName:a.name||code,assetClass:a.group||'กองทุน',webAdded:true};
+ FUND_MASTER[code]=meta; registry[code]=meta;
+ localStorage.setItem('fund_master_web_registry_v1',JSON.stringify(registry));
+ if(!sheetsToken||!sheetId) return false;
+ await ensureSheetTabs();
+ const existing=await sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values/FundMaster!A:I`);
+ const vals=existing.values||[];
+ const idx=vals.findIndex((r,i)=>i>0 && canonicalFundCode(r[0]||'')===code);
+ const row=fundMasterRowForAsset(a);
+ if(idx>0){
+   await sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values/FundMaster!A${idx+1}:I${idx+1}?valueInputOption=USER_ENTERED`,{method:'PUT',body:JSON.stringify({range:`FundMaster!A${idx+1}:I${idx+1}`,majorDimension:'ROWS',values:[row]})});
+ }else{
+   await sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values/FundMaster!A:I:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,{method:'POST',body:JSON.stringify({range:'FundMaster!A:I',majorDimension:'ROWS',values:[row]})});
+ }
+ return true;
+}
+function renderMarketManager(){
+ const el=document.getElementById('marketManagerList');if(!el)return;
+ if(managerTab==='fund'){
+  // My funds come from the real portfolio, so the manager view here is read-only:
+  // there's nothing to remove/toggle, it just mirrors what's already being invested in.
+  const list=financeMyFundsList();
+  el.innerHTML=list.length?list.map(a=>`<div class="market-manager-row" style="grid-template-columns:1fr auto"><div><b>${esc(a.ticker)}</b><div style="font-size:11px;color:var(--ink-faint)">${esc(a.name||a.ticker)}${a.owner?' • '+esc(a.owner):''}</div></div><div style="font-size:11px;color:var(--ink-faint)">${esc(a.group||'กองทุน')}</div></div>`).join(''):'<div class="finance-empty">ยังไม่มีกองทุนในพอร์ต</div>';
+  return;
+ }
+ const list=MARKET_ASSETS.filter(a=>managerTab==='etf'?isETFAsset(a):(String(a.exchange).toUpperCase()!=='FUND'&&!isETFAsset(a)));
+ el.innerHTML=list.length?list.map(a=>`<div class="market-manager-row" data-ticker="${esc(a.ticker)}"><div><b>${esc(a.ticker)}</b><div style="font-size:11px;color:var(--ink-faint)">${esc(a.name||a.ticker)}</div></div><div style="font-size:11px;color:var(--ink-faint)">${esc(a.exchange||'')}</div><div style="font-size:11px;color:var(--ink-faint)">${esc(a.group||'ETF')}${a.navPending?' · NAV รอข้อมูล':''}</div><select data-k="active"><option value="true" ${a.active!==false?'selected':''}>ใช่</option><option value="false" ${a.active===false?'selected':''}>ไม่</option></select><button class="remove" type="button" title="ลบ">×</button></div>`).join(''):'<div class="finance-empty">ยังไม่มีรายการ</div>';
+ el.querySelectorAll('.remove').forEach(b=>b.addEventListener('click',()=>{const row=b.closest('.market-manager-row');const t=row.dataset.ticker;MARKET_ASSETS=MARKET_ASSETS.filter(a=>String(a.ticker).toUpperCase()!==t.toUpperCase());renderMarketManager();}));
+ el.querySelectorAll('select[data-k=active]').forEach(sel=>sel.addEventListener('change',()=>{const t=sel.closest('.market-manager-row').dataset.ticker;const a=MARKET_ASSETS.find(x=>String(x.ticker).toUpperCase()===t.toUpperCase());if(a)a.active=sel.value==='true';}));
+}
+function setManagerTab(tab){
+ managerTab=tab;
+ document.querySelectorAll('#managerSeg button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+ renderMarketManager();
+}
+document.getElementById('managerSeg')?.addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(!b)return;setManagerTab(b.dataset.tab);});
+async function addMarketSymbol(){const input=document.getElementById('marketSymbolInput');const ticker=input?.value?.trim().toUpperCase();if(!ticker)return showToast('กรุณากรอกชื่อย่อก่อน');if(MARKET_ASSETS.some(a=>String(a.ticker).toUpperCase()===ticker)){showToast(`${ticker} มีอยู่แล้ว`);return;}const a=marketAssetFromSymbol(ticker);
+ if(String(a.exchange).toUpperCase()==='FUND'){const n=FUND_NAV[canonicalFundCode(a.ticker)];if(!n?.nav)a.navPending=true;}
+ MARKET_ASSETS.push(a);localStorage.setItem('market_assets_v3982',JSON.stringify(MARKET_ASSETS));input.value='';renderMarketManager();marketInitial();renderFinanceCards();if(String(a.exchange).toUpperCase()==='FUND'){try{const saved=await saveNewFundToFundMaster(a);showToast(saved?`เพิ่ม ${ticker} แล้ว • บันทึก FundMaster แล้ว`:`เพิ่ม ${ticker} แล้ว • NAV รอข้อมูล`);}catch(e){console.error(e);showToast(`เพิ่ม ${ticker} แล้ว • ยังบันทึก FundMaster ไม่สำเร็จ`);}}else showToast(`เพิ่ม ${ticker} แล้ว`);}
+async function saveMarketManager(){localStorage.setItem('market_assets_v3982',JSON.stringify(MARKET_ASSETS));marketInitial();renderFinanceCards();if(sheetsToken&&sheetId){await sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values/MarketWatch!A:S:clear`,{method:'POST',body:'{}'});await sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values/MarketWatch!A1?valueInputOption=USER_ENTERED`,{method:'PUT',body:JSON.stringify({range:'MarketWatch!A1',majorDimension:'ROWS',values:marketFormulaRows()})});await pullMarketWatch();}showToast('บันทึก Market Board แล้ว');}
+document.querySelectorAll('#financeSeg button').forEach(b=>b.classList.toggle('active',b.dataset.tab===financeTab));
 marketInitial();renderFinanceCards();
 document.getElementById('marketRefreshBtn')?.addEventListener('click',()=>pullMarketWatch().then(()=>showToast('อัปเดต Market Watch แล้ว')));
 document.getElementById('financeRefreshBtn')?.addEventListener('click',()=>pullMarketWatch().then(()=>showToast('อัปเดต Finance แล้ว')));
-document.getElementById('marketManagerBtn')?.addEventListener('click',()=>{renderMarketManager();document.getElementById('marketManagerModal').hidden=false;});
+document.getElementById('marketManagerBtn')?.addEventListener('click',()=>{setManagerTab(financeTab);document.getElementById('marketManagerModal').hidden=false;});
 document.getElementById('marketManagerClose')?.addEventListener('click',()=>document.getElementById('marketManagerModal').hidden=true);
-document.getElementById('marketAddBtn')?.addEventListener('click',()=>{MARKET_ASSETS.push({ticker:'',exchange:'NASDAQ',name:'',group:'ETF',active:true});renderMarketManager();});
+document.getElementById('marketAddBtn')?.addEventListener('click',addMarketSymbol); document.getElementById('marketSymbolInput')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addMarketSymbol();}});
 document.getElementById('marketSaveBtn')?.addEventListener('click',async()=>{try{await saveMarketManager();document.getElementById('marketManagerModal').hidden=true;}catch(e){console.error(e);showToast('บันทึก Market Board ไม่สำเร็จ');}});
 document.getElementById('financeDetailClose')?.addEventListener('click',()=>document.getElementById('financeDetailOverlay').hidden=true);
 
@@ -1908,7 +2104,7 @@ async function sheetsApi(url,opts={}){
 }
 async function createSpreadsheet(){const j=await sheetsApi('https://sheets.googleapis.com/v4/spreadsheets',{method:'POST',body:JSON.stringify({properties:{title:'My Family Funds — Data'},sheets:[{properties:{title:'Funds'}},{properties:{title:'Investments'}}]})});sheetId=j.spreadsheetId;localStorage.setItem('google_sheet_id',sheetId);}
 async function getSpreadsheetMeta(){return sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}?fields=sheets.properties`);}
-async function ensureSheetTabs(){const meta=await getSpreadsheetMeta(),titles=(meta.sheets||[]).map(s=>s.properties.title),req=[];['Funds','FundMaster','PlanMaster','Investments'].forEach(t=>{if(!titles.includes(t))req.push({addSheet:{properties:{title:t}}});});if(req.length)await sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}:batchUpdate`,{method:'POST',body:JSON.stringify({requests:req})});}
+async function ensureSheetTabs(){const meta=await getSpreadsheetMeta(),titles=(meta.sheets||[]).map(s=>s.properties.title),req=[];['Funds','FundMaster','PlanMaster','Investments','MarketWatch'].forEach(t=>{if(!titles.includes(t))req.push({addSheet:{properties:{title:t}}});});if(req.length)await sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}:batchUpdate`,{method:'POST',body:JSON.stringify({requests:req})});}
 async function clearAndWriteSheet(title,values){await sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values/${encodeURIComponent(title)}!A:Z:clear`,{method:'POST',body:'{}'});return sheetsApi(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values/${encodeURIComponent(title)}!A1?valueInputOption=USER_ENTERED`,{method:'PUT',body:JSON.stringify({range:`${title}!A1`,majorDimension:'ROWS',values})});}
 function sheetRows(){
   const funds=[['ID','Owner','Fund Code','Display Name','Official Fund Name','Manager','Asset Class','Favorite','Target/Year']],
@@ -1944,6 +2140,7 @@ async function pullFromSheets(options={}){if(!sheetsToken||!sheetId)throw new Er
   const masterByCode={};
   (mr.slice(1)||[]).forEach(r=>{if(!r[0])return;masterByCode[r[0]]={displayName:r[1]||r[0],officialName:r[2]||'',manager:r[3]||'',assetClass:r[4]||'',nav:r[5]!==''?Number(r[5]):undefined,date:r[6]||'',source:r[7]||'',active:String(r[8]).toUpperCase()!=='FALSE'};});
   Object.entries(masterByCode).forEach(([code,m])=>{if(m.displayName)FUND_MASTER[code]={...(FUND_MASTER[code]||{}),...m};if(m.nav!==undefined)FUND_NAV[code]={nav:m.nav,date:m.date,source:m.source};});
+  try{const reg=JSON.parse(localStorage.getItem('fund_master_web_registry_v1')||'{}');Object.entries(reg||{}).forEach(([code,m])=>{if(code&&!FUND_MASTER[code])FUND_MASTER[code]=m;else if(code&&m?.webAdded)FUND_MASTER[code]={...(FUND_MASTER[code]||{}),...m};});}catch(e){}
   (fr.slice(1)||[]).forEach(r=>{if(!r[0])return;const code=canonicalFundCode(r[2]||r[3]||'');map.set(r[0],{id:r[0],owner:canonicalOwner(r[1]||''),name:code,favorite:String(r[7]).toUpperCase()==='TRUE',target:Number(r[8])||0,years:{},transactions:[]});});
   if(!map.size){(fr.slice(1)||[]).forEach(r=>{if(!r[0])return;const code=canonicalFundCode(r[2]||'');map.set(r[0],{id:r[0],owner:canonicalOwner(r[1]||''),name:code,favorite:String(r[3]).toUpperCase()==='TRUE',target:Number(r[4])||0,years:{},transactions:[]});});}
   // PlanMaster is the editable monthly-plan source of truth. Read it first, then
@@ -2217,6 +2414,69 @@ if('serviceWorker' in navigator){
 
 /* ================= INIT ================= */
 renderAll();
+</script>
+<script id="v39-manager-redesign-js">
+(function(){
+  const ownerNames=['Suksan','Wirocha','Phoom'];
+  function logoFor(t){const x=String(t||'').toUpperCase(); return x.length>7?x.slice(0,3):x.slice(0,5)||'FUND';}
+  function renderFundManager(){
+    const el=document.getElementById('marketManagerList'); if(!el)return;
+    const list=(typeof financeMyFundsList==='function'?financeMyFundsList():[]);
+    const count=document.getElementById('managerFundCount'); if(count)count.textContent=list.length;
+    document.getElementById('managerSectionTitle').textContent='กองทุน';
+    document.getElementById('managerSectionSub').textContent='รายการกองทุนที่มีอยู่ในพอร์ต';
+    document.getElementById('managerAddFundBtn').hidden=false;
+    document.getElementById('managerSymbolBox').hidden=true;
+    document.getElementById('managerListHead').style.gridTemplateColumns='minmax(190px,1.6fr) minmax(120px,1fr) 90px 34px';
+    document.getElementById('managerNote').textContent='กองทุนอ้างอิงรายการจริงในพอร์ต • ปุ่ม “เพิ่ม” ใช้สำหรับเพิ่มรายการใหม่';
+    el.innerHTML=list.length?list.map(a=>{
+      const owner=a.owner||a.portfolioOwner||'';
+      const opts=ownerNames.map(o=>`<option value="${esc(o)}" ${o===owner?'selected':''}>${esc(o)}</option>`).join('');
+      return `<div class="v39-manager-card" data-ticker="${esc(a.ticker)}">
+        <div class="v39-card-main"><div class="v39-card-logo">${esc(logoFor(a.ticker))}</div><div style="min-width:0"><div class="v39-card-symbol">${esc(a.ticker)}</div><div class="v39-card-name">${esc(a.name||a.ticker)}</div><div class="v39-card-meta">${esc(a.group||'กองทุน')}${a.nav!=null?' • NAV '+esc(a.nav):''}</div></div></div>
+        <select class="v39-owner-select" data-owner>${opts}</select>
+        <span class="v39-card-status">ใช้งาน</span>
+        <button class="v39-card-remove" type="button" title="ลบ" data-remove>×</button>
+      </div>`;
+    }).join(''):'<div class="finance-empty" style="padding:28px">ยังไม่มีกองทุนในพอร์ต</div>';
+    el.querySelectorAll('[data-owner]').forEach(sel=>sel.addEventListener('change',()=>{
+      const row=sel.closest('.v39-manager-card'), ticker=row.dataset.ticker;
+      const f=(DATA.funds||[]).find(x=>canonicalFundCode(x.name)===canonicalFundCode(ticker));
+      if(f){f.owner=sel.value; localStorage.setItem(STORAGE_KEY,JSON.stringify(DATA)); renderAll();}
+    }));
+    el.querySelectorAll('[data-remove]').forEach(btn=>btn.addEventListener('click',()=>{
+      const row=btn.closest('.v39-manager-card');
+      if(confirm('ลบกองทุนนี้ออกจากพอร์ตหรือไม่?')){
+        const ticker=row.dataset.ticker; DATA.funds=(DATA.funds||[]).filter(f=>canonicalFundCode(f.name)!==canonicalFundCode(ticker)); localStorage.setItem(STORAGE_KEY,JSON.stringify(DATA)); renderAll(); renderFundManager(); showToast('ลบกองทุนแล้ว');
+      }
+    }));
+  }
+  function renderMarketTab(){
+    const el=document.getElementById('marketManagerList'); if(!el)return;
+    const tab=window.managerTab||'etf';
+    const list=MARKET_ASSETS.filter(a=>tab==='etf'?isETFAsset(a):(String(a.exchange).toUpperCase()!=='FUND'&&!isETFAsset(a)));
+    document.getElementById('managerSectionTitle').textContent=tab==='etf'?'ETF':'Stock';
+    document.getElementById('managerSectionSub').textContent=tab==='etf'?'รายการ ETF ที่จะแสดงบน Market Watch':'รายการ Stock ที่จะแสดงบน Market Watch';
+    document.getElementById('managerAddFundBtn').hidden=true;
+    document.getElementById('managerSymbolBox').hidden=false;
+    document.getElementById('managerNote').textContent='ค้นหา Symbol ใหม่ได้จากช่องเดียว • ระบบจะกัน Symbol ซ้ำก่อนเพิ่ม';
+    el.innerHTML=list.length?list.map(a=>`<div class="v39-manager-card" data-ticker="${esc(a.ticker)}">
+      <div class="v39-card-main"><div class="v39-card-logo">${esc(logoFor(a.ticker))}</div><div style="min-width:0"><div class="v39-card-symbol">${esc(a.ticker)}</div><div class="v39-card-name">${esc(a.name||a.ticker)}</div><div class="v39-card-meta">${esc(a.exchange||'')}${a.group?' • '+esc(a.group):''}</div></div></div>
+      <div class="v39-card-meta">${a.navPending?'NAV รอข้อมูล':'GOOGLEFINANCE'}</div>
+      <select class="v39-owner-select" data-active><option value="true" ${a.active!==false?'selected':''}>ใช้งาน</option><option value="false" ${a.active===false?'selected':''}>ปิด</option></select>
+      <button class="v39-card-remove" type="button" title="ลบ" data-remove>×</button>
+    </div>`).join(''):'<div class="finance-empty" style="padding:28px">ยังไม่มีรายการ</div>';
+    el.querySelectorAll('[data-remove]').forEach(btn=>btn.addEventListener('click',()=>{const row=btn.closest('.v39-manager-card'); MARKET_ASSETS=MARKET_ASSETS.filter(a=>String(a.ticker).toUpperCase()!==String(row.dataset.ticker).toUpperCase()); renderMarketTab();}));
+    el.querySelectorAll('[data-active]').forEach(sel=>sel.addEventListener('change',()=>{const t=sel.closest('.v39-manager-card').dataset.ticker;const a=MARKET_ASSETS.find(x=>String(x.ticker).toUpperCase()===String(t).toUpperCase());if(a)a.active=sel.value==='true';}));
+  }
+  window.setManagerTab=function(tab){window.managerTab=tab;document.querySelectorAll('#managerSeg button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab)); if(tab==='fund')renderFundManager();else renderMarketTab();};
+  document.addEventListener('DOMContentLoaded',()=>{
+    document.getElementById('managerAddFundBtn')?.addEventListener('click',()=>{document.getElementById('marketManagerModal').hidden=true; document.getElementById('modalAddFund').hidden=false; if(typeof populateOwnerSelects==='function')populateOwnerSelects();});
+    document.getElementById('marketManagerCloseTop')?.addEventListener('click',()=>document.getElementById('marketManagerModal').hidden=true);
+    document.querySelectorAll('#managerSeg button').forEach(b=>b.addEventListener('click',()=>window.setManagerTab(b.dataset.tab)));
+    document.getElementById('marketManagerBtn')?.addEventListener('click',()=>window.setManagerTab(window.financeTab||'fund'));
+  });
+})();
 </script>
 </body>
 </html>
