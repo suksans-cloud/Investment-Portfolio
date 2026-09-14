@@ -69,6 +69,10 @@
     d.innerHTML=`<div class="mff-auth-card"><div class="mff-auth-brand">My Family Funds</div><div class="mff-auth-sub">ระบบจัดการกองทุนครอบครัว • ปลอดภัยด้วย Google Apps Script</div><div id="mffAuthBody"></div></div>`;
     document.body.appendChild(d);
   }
+  function showConnecting(){
+    overlay(); const b=document.getElementById('mffAuthBody');
+    b.innerHTML=`<h2>กำลังตรวจสอบสิทธิ์...</h2><div style="font-size:12px;color:#66736e">กรุณารอสักครู่ กำลังเชื่อมต่อระบบยืนยันตัวตน</div>`;
+  }
   function showLogin(message){
     overlay(); const b=document.getElementById('mffAuthBody');
     b.innerHTML=`<h2>เข้าสู่ระบบ</h2><form id="mffLoginForm"><label>ชื่อผู้ใช้</label><input id="mffUser" autocomplete="username" required><label>รหัสผ่าน</label><input id="mffPass" type="password" autocomplete="current-password" required><button class="mff-auth-btn" id="mffLoginBtn">เข้าสู่ระบบ</button><div class="mff-auth-msg">${esc(message||'')}</div></form><button class="mff-auth-link" id="mffSetupLink">ตั้งค่า Admin ครั้งแรก</button>`;
@@ -192,8 +196,22 @@
     // ตรวจ session เดิมก่อนเสมอ เพื่อไม่ให้การเช็ก bootstrap บังคับล็อกอินใหม่ทุกครั้ง
     const token=localStorage.getItem(TOKEN_KEY)||sessionStorage.getItem(TOKEN_KEY);
     if(token){
-      try{const r=await api('validate',{});state=r.user;unlock();return;}
-      catch(e){clearSession();}
+      showConnecting();
+      // Apps Script เว็บแอปบางครั้ง "cold start" หรือหลุด CORS ชั่วคราวตอนรีเฟรชหน้าแรกๆ
+      // ทำให้ validate() พังทั้งที่ token ยังใช้ได้จริง จึง retry สั้นๆ ก่อน ไม่ใช่เด้งไปหน้า login ทันที
+      let lastErr=null;
+      for(let attempt=0; attempt<3; attempt++){
+        try{
+          const r=await api('validate',{});
+          state=r.user; unlock(); return;
+        }catch(e){
+          lastErr=e;
+          // ข้อความที่บอกชัดว่า token ไม่ถูกต้อง/หมดอายุจริงๆ ไม่ต้อง retry ให้ออกจากระบบทันที
+          if(/invalid|expired|unauthor|ไม่ถูกต้อง|หมดอายุ/i.test(e.message||'')) break;
+          if(attempt<2) await new Promise(res=>setTimeout(res,900));
+        }
+      }
+      clearSession();
     }
     try{const s=await api('bootstrapStatus',{});if(!s.hasUsers){showSetup();return;}}
     catch(e){showLogin('เชื่อมต่อระบบยืนยันตัวตนไม่ได้ กรุณาตรวจสอบ Apps Script Web App และอินเทอร์เน็ต');return;}
