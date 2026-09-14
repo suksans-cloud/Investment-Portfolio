@@ -85,10 +85,21 @@
     document.getElementById('mffSetupForm').onsubmit=async e=>{e.preventDefault();const p=document.getElementById('mffAdminPass').value,p2=document.getElementById('mffAdminPass2').value;if(p!==p2){showSetup('รหัสผ่านไม่ตรงกัน');return;}try{const r=await api('bootstrapAdmin',{username:document.getElementById('mffAdmin').value.trim(),password:p});if(!r.ok)throw Error(r.error||'สร้าง Admin ไม่สำเร็จ');showLogin('สร้าง Admin สำเร็จ กรุณาเข้าสู่ระบบ');}catch(x){showSetup(x.message)}};
     document.getElementById('mffBackLogin').onclick=()=>showLogin();
   }
+  const API_TIMEOUT_MS=12000; // กันไม่ให้ fetch ค้างตลอดไปเวลาเน็ตนิ่งหรือ Apps Script ตอบช้า
   async function api(action,data){
     const payload=Object.assign({action},data||{});const token=localStorage.getItem(TOKEN_KEY)||sessionStorage.getItem(TOKEN_KEY);if(token)payload.token=token;
-    const r=await fetch(ENDPOINT,{method:'POST',mode:'cors',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
-    const text=await r.text();let j;try{j=JSON.parse(text)}catch(e){throw Error('เซิร์ฟเวอร์ตอบกลับไม่ใช่ JSON');}if(!r.ok||j.ok===false)throw Error(j.error||'เกิดข้อผิดพลาด');return j;
+    const ctrl=new AbortController();
+    const timer=setTimeout(()=>ctrl.abort(),API_TIMEOUT_MS);
+    let r;
+    try{
+      r=await fetch(ENDPOINT,{method:'POST',mode:'cors',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),signal:ctrl.signal});
+    }catch(e){
+      if(e && e.name==='AbortError') throw Error('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ (หมดเวลา) กรุณาลองใหม่');
+      throw Error('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต');
+    }finally{
+      clearTimeout(timer);
+    }
+    const text=await r.text();let j;try{j=JSON.parse(text)}catch(e){throw Error('เซิร์ฟเวอร์ตอบกลับไม่ใช่ JSON (อาจเป็นเพราะ URL การ deploy ไม่ถูกต้อง หรือสิทธิ์การเข้าถึงไม่ใช่ Anyone)');}if(!r.ok||j.ok===false)throw Error(j.error||'เกิดข้อผิดพลาด');return j;
   }
   function saveSession(r,remember){state=r.user;sessionStorage.setItem(TOKEN_KEY,r.token);sessionStorage.setItem(USER_KEY,JSON.stringify(r.user));localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);localStorage.removeItem(REMEMBER_KEY);}
   function clearSession(){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);sessionStorage.removeItem(TOKEN_KEY);sessionStorage.removeItem(USER_KEY);state=null;}
@@ -195,15 +206,18 @@
     overlay();
     // ตรวจ session เดิมก่อนเสมอ เพื่อไม่ให้การเช็ก bootstrap บังคับล็อกอินใหม่ทุกครั้ง
     const token=localStorage.getItem(TOKEN_KEY)||sessionStorage.getItem(TOKEN_KEY);
+    let loginMessage='';
     if(token){
       showConnecting();
       // Apps Script เว็บแอปบางครั้ง "cold start" หรือหลุด CORS ชั่วคราวตอนรีเฟรชหน้าแรกๆ
       // ทำให้ validate() พังทั้งที่ token ยังใช้ได้จริง จึง retry สั้นๆ ก่อน ไม่ใช่เด้งไปหน้า login ทันที
+      // แต่ทุกครั้งต้อง "จบ" ด้วยการไปหน้า login/setup เสมอ ห้ามค้างที่หน้านี้ตลอดไป
       let lastErr=null;
+      let success=false;
       for(let attempt=0; attempt<3; attempt++){
         try{
           const r=await api('validate',{});
-          state=r.user; unlock(); return;
+          state=r.user; unlock(); success=true; break;
         }catch(e){
           lastErr=e;
           // ข้อความที่บอกชัดว่า token ไม่ถูกต้อง/หมดอายุจริงๆ ไม่ต้อง retry ให้ออกจากระบบทันที
@@ -211,11 +225,18 @@
           if(attempt<2) await new Promise(res=>setTimeout(res,900));
         }
       }
+      if(success) return;
       clearSession();
+      if(lastErr) loginMessage=lastErr.message||'เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่';
     }
-    try{const s=await api('bootstrapStatus',{});if(!s.hasUsers){showSetup();return;}}
-    catch(e){showLogin('เชื่อมต่อระบบยืนยันตัวตนไม่ได้ กรุณาตรวจสอบ Apps Script Web App และอินเทอร์เน็ต');return;}
-    showLogin();
+    try{
+      const s=await api('bootstrapStatus',{});
+      if(!s.hasUsers){showSetup();return;}
+    }catch(e){
+      showLogin(loginMessage||'เชื่อมต่อระบบยืนยันตัวตนไม่ได้ กรุณาตรวจสอบ Apps Script Web App และอินเทอร์เน็ต');
+      return;
+    }
+    showLogin(loginMessage);
   }
   window.MFFAuth={getUser:()=>state,api,logout,adminPanel};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
