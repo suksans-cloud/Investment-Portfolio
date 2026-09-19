@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Setting — My Family Funds</title>
+<meta name="theme-color" content="#0F5B4D">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shell.css">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+.mff-settings-body{padding:16px 18px 40px;max-width:460px;margin:0 auto}
+.mff-settings-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 16px 14px;margin-bottom:14px}
+.mff-settings-card h2{margin:0 0 4px;font-size:15.5px;display:flex;align-items:center;gap:7px}
+.mff-settings-card .hint{margin:0 0 10px;font-size:11.5px;color:var(--ink-soft);line-height:1.5}
+.mff-settings-actions{display:flex;gap:8px;margin-top:10px}
+.mff-sync-status{margin-top:10px;font-size:12.5px;line-height:1.7}
+.mff-sync-status .ok{color:#1f8a63;font-weight:700}
+.mff-sync-status .warn{color:#c0783a;font-weight:700}
+.mff-module-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+.mff-module-row:last-child{border-bottom:0}
+.mff-module-row b{font-weight:700;color:var(--ink)}
+.mff-module-row span{color:var(--ink-soft)}
+</style>
+</head>
+<body>
+
+<div class="mff-app" style="padding-bottom:20px">
+
+  <div class="mff-hero-wrap" style="padding-bottom:20px;border-radius:0 0 28px 28px">
+    <div class="mff-topbar">
+      <a class="back" href="../index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 5 8 12l7 7"/></svg>
+        หน้าแรก
+      </a>
+      <span></span>
+    </div>
+    <div class="mff-hero" style="padding-top:0">
+      <p class="eyebrow" style="margin-bottom:2px">Setting</p>
+      <h1 style="font-size:19px;white-space:nowrap">การเชื่อมต่อ & ซิงก์ข้อมูล</h1>
+    </div>
+  </div>
+
+  <div class="mff-settings-body">
+
+    <section class="mff-settings-card">
+      <h2>🔗 ซิงก์กับ Google Sheets</h2>
+      <p class="hint">ใช้ค่าเดียวกันทั้ง 4 โมดูล (My Money, My Portfolio, My Bookshelf, My Profile) — ข้อมูลจะแยกเก็บกันคนละแท็บในสเปรดชีตเดียวกัน</p>
+      <div class="mff-field-row"><div class="lbl">Client ID</div><input id="cfgClientId" placeholder="วาง Google OAuth Client ID"></div>
+      <div class="mff-field-row"><div class="lbl">Sheet ID</div><input id="cfgSheetId" placeholder="Spreadsheet ID"></div>
+      <div class="mff-settings-actions">
+        <button id="btnSaveSheets" class="mff-btn mff-btn-primary">บันทึก & เชื่อมต่อ</button>
+      </div>
+      <div class="mff-sync-status" id="statusSheets"></div>
+    </section>
+
+    <section class="mff-settings-card">
+      <h2>🔄 ซิงก์ข้อมูลทั้งหมดตอนนี้</h2>
+      <p class="hint">ดันข้อมูลที่มีอยู่ในเครื่องนี้ของ My Money, My Bookshelf, My Profile ขึ้น Google Sheets ทีเดียวในคลิกเดียว — ไม่ต้องเปิดแต่ละหน้าเอง<br>(My Portfolio ซิงก์ให้อัตโนมัติอยู่แล้วทุกครั้งที่แก้ไขข้อมูลในหน้านั้น จึงไม่ต้องรวมไว้ที่นี่)</p>
+      <div class="mff-settings-actions">
+        <button id="btnSyncAll" class="mff-btn mff-btn-primary">ซิงก์ข้อมูลทั้งหมดตอนนี้</button>
+      </div>
+      <div class="mff-sync-status" id="statusSyncAll"></div>
+    </section>
+
+    <section class="mff-settings-card">
+      <h2>💾 ซิงก์กับ Google Drive</h2>
+      <p class="hint">ใช้สำหรับค้นหา/แนบไฟล์หนังสือใน My Bookshelf</p>
+      <div class="mff-settings-actions">
+        <button id="btnConnectDrive" class="mff-btn mff-btn-ghost">เชื่อมต่อ Google Drive</button>
+      </div>
+      <div class="mff-sync-status" id="statusDrive"></div>
+    </section>
+
+    <section class="mff-settings-card">
+      <h2>📶 สถานะซิงก์แต่ละโมดูล</h2>
+      <div id="statusPerModule"></div>
+    </section>
+
+    <section class="mff-settings-card">
+      <h2>📧 สรุปรายเดือนทางอีเมล</h2>
+      <p class="hint">สรุปรายรับ-รายจ่าย (My Money), เงินลงทุนสะสมเทียบเดือนก่อน (My Portfolio), จำนวนหนังสือ 3 หมวด (My Bookshelf) — ส่งเข้าอีเมลอัตโนมัติทุกวันที่ 1 ของเดือนถัดไป โดยอ่านข้อมูลจาก Google Sheet ด้านบน</p>
+      <div class="mff-field-row"><div class="lbl">อีเมลผู้รับ</div><input id="cfgReportEmail" type="email" placeholder="name@email.com"></div>
+      <div class="mff-settings-actions" style="flex-direction:column;gap:8px">
+        <button id="btnSaveReport" class="mff-btn mff-btn-primary">บันทึกการตั้งค่า</button>
+        <button id="btnInstallTrigger" class="mff-btn mff-btn-ghost">เปิดใช้งานส่งอัตโนมัติทุกวันที่ 1</button>
+        <button id="btnTestReport" class="mff-btn mff-btn-ghost">ส่งอีเมลทดสอบตอนนี้ (สรุปเดือนปัจจุบัน)</button>
+      </div>
+      <div class="mff-sync-status" id="statusReport"></div>
+      <p class="hint" style="margin-top:10px;color:#c0783a">⚠️ เว็บแอปรุ่นนี้ไม่มีระบบล็อกอิน ใครก็ตามที่เปิดหน้านี้แก้อีเมลผู้รับรายงานได้ ถ้าต้องการจำกัดสิทธิ์เฉพาะ Admin ให้ใช้ไฟล์รุ่น "With-Login" แทน</p>
+    </section>
+
+    <section class="mff-settings-card">
+      <h2>⚙️ Apps Script Backend</h2>
+      <div class="mff-field-row"><div class="lbl">Endpoint</div><div class="val" id="endpointDisplay" style="word-break:break-all;font-size:11px"></div></div>
+      <p class="hint" style="margin-top:8px">แก้ URL นี้ได้ที่ไฟล์ <code>config.js</code> จุดเดียว ใช้สำหรับส่งรายงานสรุปรายเดือนเท่านั้น (รุ่นนี้ไม่มีระบบล็อกอิน)</p>
+    </section>
+
+  </div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../portfolio/auth-open.js"></script>
+<script>
+(function(){
+'use strict';
+function esc(s){return String(s==null?'':s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+function toast(msg){
+  let t=document.getElementById('mffToast');
+  if(!t){ t=document.createElement('div'); t.id='mffToast'; t.style.cssText='position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#14211d;color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;z-index:9999;max-width:88vw;text-align:center'; document.body.appendChild(t); }
+  t.textContent=msg; t.style.opacity='1';
+  clearTimeout(t._h); t._h=setTimeout(()=>{ t.style.opacity='0'; },2600);
+}
+const ENDPOINT = window.MFF_ENDPOINT || '';
+document.getElementById('endpointDisplay').textContent = ENDPOINT || '(ยังไม่ได้ตั้งค่า)';
+
+async function api(action,data){
+  const payload=Object.assign({action},data||{});
+  const r=await fetch(ENDPOINT,{method:'POST',mode:'cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+  const j=await r.json();
+  if(!r.ok||j.ok===false) throw new Error(j.error||'เกิดข้อผิดพลาด');
+  return j;
+}
+
+/* ---------- Google Sheets ---------- */
+const clientIdInput=document.getElementById('cfgClientId');
+const sheetIdInput=document.getElementById('cfgSheetId');
+clientIdInput.value=localStorage.getItem('google_client_id')||'';
+sheetIdInput.value=localStorage.getItem('google_sheet_id')||'';
+
+function renderSheetsStatus(){
+  const connected = localStorage.getItem('google_sheets_connected')==='1' && sheetIdInput.value.trim();
+  document.getElementById('statusSheets').innerHTML = connected
+    ? '<span class="ok">✅ เชื่อมต่อแล้ว</span>'
+    : '<span class="warn">⚠️ ยังไม่ได้เชื่อมต่อ</span> — บันทึกและเชื่อมต่อเพื่อให้ทุกโมดูลใช้ค่าชุดนี้';
+}
+let sheetsClient=null;
+function ensureSheetsClient(cid){
+  if(!window.google||!google.accounts||!google.accounts.oauth2) return null;
+  if(!sheetsClient || sheetsClient._cid!==cid){
+    sheetsClient=google.accounts.oauth2.initTokenClient({
+      client_id:cid, scope:'https://www.googleapis.com/auth/spreadsheets',
+      callback:r=>{
+        if(r && r.access_token){ localStorage.setItem('google_sheets_connected','1'); renderSheetsStatus(); toast('เชื่อมต่อ Google Sheets แล้ว'); }
+        else toast('เชื่อมต่อไม่สำเร็จ');
+      }
+    });
+    sheetsClient._cid=cid;
+  }
+  return sheetsClient;
+}
+document.getElementById('btnSaveSheets').addEventListener('click',()=>{
+  const cid=clientIdInput.value.trim(), sid=sheetIdInput.value.trim();
+  if(!cid||!sid){ toast('กรุณากรอกให้ครบ'); return; }
+  localStorage.setItem('google_client_id',cid);
+  localStorage.setItem('google_sheet_id',sid);
+  const c=ensureSheetsClient(cid);
+  if(c) c.requestAccessToken({prompt:'consent'});
+  else toast('โหลด Google API ไม่สำเร็จ ลองใหม่อีกครั้ง');
+});
+renderSheetsStatus();
+
+/* ---------- ซิงก์ข้อมูลทั้งหมดตอนนี้ (Money / Bookshelf / Profile) ----------
+   อ่านข้อมูลตรงจาก cache ที่แต่ละโมดูลเก็บไว้ในเครื่องนี้ (localStorage) แล้วเขียน
+   ขึ้น Google Sheets โดยใช้ Tab/Headers ชุดเดียวกับที่แต่ละโมดูลใช้เอง จึงเข้ากันได้
+   100% — ไม่ต้องเปิดหน้า Money/Bookshelf/Profile เพื่อกดบันทึกทีละหน้าอีกต่อไป */
+const SYNC_ALL_TARGETS = [
+  { name:'My Money', cacheKey:'mff_money_cache_v3', tab:'MoneyTransactions', range:'A:G',
+    headers:['ID','Month','Type','Category','Amount','CreatedAt','UpdatedAt'],
+    toRow:t=>[t.id,t.month,t.type,t.category,t.amount,t.createdAt,t.updatedAt],
+    lastSyncKey:'sheet_last_sync_money' },
+  { name:'My Bookshelf', cacheKey:'mff_bookshelf_cache_v1', tab:'BookshelfItems', range:'A:J',
+    headers:['ID','Title','Status','DriveFileId','DriveFileName','MimeType','Size','WebViewLink','AddedAt','UpdatedAt'],
+    toRow:b=>[b.id,b.title,b.status,b.driveFileId,b.driveFileName,b.mimeType,b.size,b.webViewLink,b.addedAt,b.updatedAt],
+    lastSyncKey:'sheet_last_sync_bookshelf' },
+  { name:'My Profile', cacheKey:'mff_profiles_cache_v1', tab:'Profiles', range:'A:L',
+    headers:['ID','Photo','FirstName','LastName','BloodGroup','Address','Email','Phone','CreatedAt','UpdatedAt','Relation','BankAccounts'],
+    toRow:p=>[p.id,p.photo,p.firstName,p.lastName,p.bloodGroup,p.address,p.email,p.phone,p.createdAt,p.updatedAt,p.relation||'',JSON.stringify(p.bankAccounts||[])],
+    lastSyncKey:'sheet_last_sync_profile' },
+];
+
+async function syncAllSheetsApi(token,url,opts){
+  const r=await fetch(url,Object.assign({headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}},opts||{}));
+  if(!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+async function syncAllEnsureTab(token,sheetId,tab,headers){
+  const meta=await syncAllSheetsApi(token,`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}?fields=sheets.properties`);
+  const titles=(meta.sheets||[]).map(s=>s.properties.title);
+  if(!titles.includes(tab)){
+    await syncAllSheetsApi(token,`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}:batchUpdate`,{method:'POST',body:JSON.stringify({requests:[{addSheet:{properties:{title:tab}}}]})});
+    await syncAllSheetsApi(token,`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values/${tab}!A1?valueInputOption=USER_ENTERED`,{method:'PUT',body:JSON.stringify({range:`${tab}!A1`,majorDimension:'ROWS',values:[headers]})});
+  }
+}
+function ensureSheetsTokenForSyncAll(cid){
+  return new Promise(resolve=>{
+    if(!window.google||!google.accounts||!google.accounts.oauth2){ resolve(null); return; }
+    const c=google.accounts.oauth2.initTokenClient({
+      client_id:cid, scope:'https://www.googleapis.com/auth/spreadsheets',
+      callback:r=>resolve(r&&r.access_token?r.access_token:null)
+    });
+    try{ c.requestAccessToken({prompt: localStorage.getItem('google_sheets_connected')==='1' ? '' : 'consent'}); }
+    catch(e){ resolve(null); }
+  });
+}
+document.getElementById('btnSyncAll').addEventListener('click', async ()=>{
+  const cid=clientIdInput.value.trim()||localStorage.getItem('google_client_id')||'';
+  const sid=sheetIdInput.value.trim()||localStorage.getItem('google_sheet_id')||'';
+  const statusEl=document.getElementById('statusSyncAll');
+  if(!cid||!sid){ toast('กรุณากรอก Client ID / Sheet ID ในหัวข้อ Google Sheets ก่อน'); return; }
+  statusEl.innerHTML='กำลังขอสิทธิ์ Google Sheets...';
+  const token=await ensureSheetsTokenForSyncAll(cid);
+  if(!token){ statusEl.innerHTML='<span class="warn">ขอสิทธิ์ Google Sheets ไม่สำเร็จ</span>'; return; }
+  localStorage.setItem('google_sheets_connected','1'); renderSheetsStatus();
+
+  const results=[];
+  for(const target of SYNC_ALL_TARGETS){
+    statusEl.innerHTML='กำลังซิงก์ '+esc(target.name)+'...';
+    try{
+      const raw=localStorage.getItem(target.cacheKey);
+      const list = raw ? JSON.parse(raw) : null;
+      if(!list){ results.push(target.name+': ยังไม่มีข้อมูลในเครื่องนี้ (ยังไม่เคยเปิดหน้านี้)'); continue; }
+      await syncAllEnsureTab(token,sid,target.tab,target.headers);
+      const values=[target.headers].concat(list.map(target.toRow));
+      await syncAllSheetsApi(token,`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sid)}/values/${target.tab}!${target.range}:clear`,{method:'POST',body:'{}'});
+      await syncAllSheetsApi(token,`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sid)}/values/${target.tab}!A1?valueInputOption=USER_ENTERED`,{method:'PUT',body:JSON.stringify({range:`${target.tab}!A1`,majorDimension:'ROWS',values})});
+      localStorage.setItem(target.lastSyncKey,new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}));
+      results.push(target.name+': ซิงก์แล้ว ('+list.length+' รายการ)');
+    }catch(e){
+      results.push(target.name+': ซิงก์ไม่สำเร็จ — '+e.message);
+    }
+  }
+  statusEl.innerHTML = results.map(r=>'• '+esc(r)).join('<br>');
+  renderModuleStatus();
+  toast('ซิงก์ข้อมูลทั้งหมดเสร็จแล้ว');
+});
+
+/* ---------- Google Drive (Bookshelf) ---------- */
+function renderDriveStatus(){
+  const connected = localStorage.getItem('google_drive_connected')==='1';
+  document.getElementById('statusDrive').innerHTML = connected
+    ? '<span class="ok">✅ เชื่อมต่อแล้ว</span>'
+    : '<span class="warn">⚠️ ยังไม่ได้เชื่อมต่อ</span>';
+}
+let driveClient=null;
+document.getElementById('btnConnectDrive').addEventListener('click',()=>{
+  const cid=clientIdInput.value.trim()||localStorage.getItem('google_client_id')||'';
+  if(!cid){ toast('กรุณากรอก Client ID ในหัวข้อ Google Sheets ก่อน'); return; }
+  if(!window.google||!google.accounts||!google.accounts.oauth2){ toast('โหลด Google API ไม่สำเร็จ ลองใหม่อีกครั้ง'); return; }
+  if(!driveClient || driveClient._cid!==cid){
+    driveClient=google.accounts.oauth2.initTokenClient({
+      client_id:cid, scope:'https://www.googleapis.com/auth/drive.readonly',
+      callback:r=>{
+        if(r && r.access_token){ localStorage.setItem('google_drive_connected','1'); renderDriveStatus(); toast('เชื่อมต่อ Google Drive แล้ว'); }
+        else toast('เชื่อมต่อไม่สำเร็จ');
+      }
+    });
+    driveClient._cid=cid;
+  }
+  driveClient.requestAccessToken({prompt:'consent'});
+});
+renderDriveStatus();
+
+/* ---------- per-module sync status ---------- */
+function renderModuleStatus(){
+  const rows=[
+    {name:'My Money', key:'sheet_last_sync_money'},
+    {name:'My Portfolio', key:'sheet_last_sync'},
+    {name:'My Bookshelf', key:'sheet_last_sync_bookshelf'},
+    {name:'My Profile', key:'sheet_last_sync_profile'},
+  ];
+  document.getElementById('statusPerModule').innerHTML = rows.map(r=>{
+    const t=localStorage.getItem(r.key);
+    return '<div class="mff-module-row"><b>'+esc(r.name)+'</b><span>'+(t?('ซิงก์ล่าสุด '+esc(t)):'ยังไม่เคยซิงก์')+'</span></div>';
+  }).join('');
+}
+renderModuleStatus();
+
+/* ---------- monthly email report (open — no login in this build) ---------- */
+const emailInput=document.getElementById('cfgReportEmail');
+async function initReportSection(){
+  try{
+    const r=await api('getReportConfig',{});
+    emailInput.value = r.email || '';
+    document.getElementById('statusReport').innerHTML = r.triggerInstalled
+      ? '<span class="ok">✅ เปิดใช้งานส่งอัตโนมัติแล้ว</span>'
+      : '<span class="warn">⚠️ ยังไม่ได้เปิดใช้งานส่งอัตโนมัติ</span>';
+  }catch(e){
+    document.getElementById('statusReport').innerHTML='<span class="warn">เชื่อมต่อ Apps Script ไม่สำเร็จ: '+esc(e.message)+'</span>';
+  }
+}
+document.getElementById('btnSaveReport').addEventListener('click',async()=>{
+  const email=emailInput.value.trim();
+  const sheetId=sheetIdInput.value.trim();
+  if(!email){ toast('กรุณากรอกอีเมลผู้รับ'); return; }
+  if(!sheetId){ toast('กรุณากรอก Sheet ID ในหัวข้อ Google Sheets ก่อน'); return; }
+  try{ await api('setReportConfig',{email,sheetId}); toast('บันทึกการตั้งค่ารายงานแล้ว'); }
+  catch(e){ toast('บันทึกไม่สำเร็จ: '+e.message); }
+});
+document.getElementById('btnInstallTrigger').addEventListener('click',async()=>{
+  try{ await api('installMonthlyTrigger',{}); toast('เปิดใช้งานส่งอัตโนมัติแล้ว'); initReportSection(); }
+  catch(e){ toast('ไม่สำเร็จ: '+e.message); }
+});
+document.getElementById('btnTestReport').addEventListener('click',async()=>{
+  toast('กำลังส่งอีเมลทดสอบ...');
+  try{ await api('sendTestReport',{}); toast('ส่งอีเมลทดสอบแล้ว ลองเช็กกล่องจดหมาย'); }
+  catch(e){ toast('ส่งไม่สำเร็จ: '+e.message); }
+});
+initReportSection();
+
+})();
+</script>
+
+</body>
+</html>
