@@ -169,16 +169,31 @@ const SYNC_ALL_TARGETS = [
   { name:'My Money', cacheKey:'mff_money_cache_v3', tab:'MoneyTransactions', range:'A:G',
     headers:['ID','Month','Type','Category','Amount','CreatedAt','UpdatedAt'],
     toRow:t=>[t.id,t.month,t.type,t.category,t.amount,t.createdAt,t.updatedAt],
+    fromRow:r=>({id:r[0], month:r[1]||'', type:r[2]||'', category:r[3]||'', amount:Number(r[4])||0, createdAt:r[5]||'', updatedAt:r[6]||''}),
     lastSyncKey:'sheet_last_sync_money' },
   { name:'My Bookshelf', cacheKey:'mff_bookshelf_cache_v1', tab:'BookshelfItems', range:'A:J',
     headers:['ID','Title','Status','DriveFileId','DriveFileName','MimeType','Size','WebViewLink','AddedAt','UpdatedAt'],
     toRow:b=>[b.id,b.title,b.status,b.driveFileId,b.driveFileName,b.mimeType,b.size,b.webViewLink,b.addedAt,b.updatedAt],
+    fromRow:r=>({id:r[0],title:r[1]||'',status:r[2]||'queued',driveFileId:r[3]||'',driveFileName:r[4]||'',mimeType:r[5]||'',size:r[6]||'',webViewLink:r[7]||'',addedAt:r[8]||'',updatedAt:r[9]||''}),
     lastSyncKey:'sheet_last_sync_bookshelf' },
   { name:'My Profile', cacheKey:'mff_profiles_cache_v1', tab:'Profiles', range:'A:L',
     headers:['ID','Photo','FirstName','LastName','BloodGroup','Address','Email','Phone','CreatedAt','UpdatedAt','Relation','BankAccounts'],
     toRow:p=>[p.id,p.photo,p.firstName,p.lastName,p.bloodGroup,p.address,p.email,p.phone,p.createdAt,p.updatedAt,p.relation||'',JSON.stringify(p.bankAccounts||[])],
+    fromRow:r=>{ let bank=[]; try{ const a=JSON.parse(r[11]||'[]'); if(Array.isArray(a)) bank=a; }catch(e){}
+      return {id:r[0], photo:r[1]||'', firstName:r[2]||'', lastName:r[3]||'', bloodGroup:r[4]||'', address:r[5]||'', email:r[6]||'', phone:r[7]||'', createdAt:r[8]||'', updatedAt:r[9]||'', relation:r[10]||'', bankAccounts:bank}; },
     lastSyncKey:'sheet_last_sync_profile' },
 ];
+function syncAllMergeById(localList, remoteList){
+  const map=new Map();
+  remoteList.forEach(r=>map.set(r.id, r));
+  localList.forEach(l=>{
+    const r=map.get(l.id);
+    if(!r){ map.set(l.id, l); return; } // มีแค่ในเครื่องนี้ — เก็บไว้ ไม่ทิ้ง
+    const lt=Date.parse(l.updatedAt)||0, rt=Date.parse(r.updatedAt)||0;
+    map.set(l.id, lt>rt ? l : r);
+  });
+  return Array.from(map.values());
+}
 
 async function syncAllSheetsApi(token,url,opts){
   const r=await fetch(url,Object.assign({headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}},opts||{}));
@@ -218,15 +233,19 @@ document.getElementById('btnSyncAll').addEventListener('click', async ()=>{
   for(const target of SYNC_ALL_TARGETS){
     statusEl.innerHTML='กำลังซิงก์ '+esc(target.name)+'...';
     try{
-      const raw=localStorage.getItem(target.cacheKey);
-      const list = raw ? JSON.parse(raw) : null;
-      if(!list){ results.push(target.name+': ยังไม่มีข้อมูลในเครื่องนี้ (ยังไม่เคยเปิดหน้านี้)'); continue; }
       await syncAllEnsureTab(token,sid,target.tab,target.headers);
-      const values=[target.headers].concat(list.map(target.toRow));
+      const raw=localStorage.getItem(target.cacheKey);
+      const localList = raw ? JSON.parse(raw) : [];
+      const got=await syncAllSheetsApi(token,`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sid)}/values/${target.tab}!${target.range}`);
+      const remoteRows=(got.values||[]).slice(1).filter(r=>r[0]);
+      const remoteList=remoteRows.map(target.fromRow);
+      const merged=syncAllMergeById(localList, remoteList);
+      const values=[target.headers].concat(merged.map(target.toRow));
       await syncAllSheetsApi(token,`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sid)}/values/${target.tab}!${target.range}:clear`,{method:'POST',body:'{}'});
       await syncAllSheetsApi(token,`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sid)}/values/${target.tab}!A1?valueInputOption=USER_ENTERED`,{method:'PUT',body:JSON.stringify({range:`${target.tab}!A1`,majorDimension:'ROWS',values})});
+      localStorage.setItem(target.cacheKey, JSON.stringify(merged)); // อัปเดต cache ในเครื่องนี้ให้ตรงกับผลรวมด้วย
       localStorage.setItem(target.lastSyncKey,new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}));
-      results.push(target.name+': ซิงก์แล้ว ('+list.length+' รายการ)');
+      results.push(target.name+': ซิงก์แล้ว ('+merged.length+' รายการ)'+(localList.length===0?' — ยังไม่มีข้อมูลในเครื่องนี้มาก่อน ใช้ของ Sheet แทน':''));
     }catch(e){
       results.push(target.name+': ซิงก์ไม่สำเร็จ — '+e.message);
     }
